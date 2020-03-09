@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Input, UncontrolledTooltip } from 'reactstrap';
+import { UncontrolledTooltip } from 'reactstrap';
 
 const Note = props => {
   const { note, xScale, phoneme, lyric, index, edit, setEdit, onChange } = props;
@@ -51,7 +51,7 @@ const Note = props => {
         onKeyPress={handleKeyPress}
         onChange={handleChange}
         className="note-input"
-        maxLength="1"
+        maxLength="2"
         ref={inputEl}
         id={`note-${index}`}
       />

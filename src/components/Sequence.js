@@ -53,7 +53,7 @@ const Sequence = props => {
     }).reverse()).reverse();
   const data = midi && midi.toJSON();
   const notes = data && data.tracks[trackIndex].notes;
-  const totalDuration = notes ? (notes[notes.length - 1].ticks + notes[notes.length - 1].durationTicks) * xScale : 1000;
+  const totalTicks = notes ? (notes[notes.length - 1].ticks + notes[notes.length - 1].durationTicks) : 10000;
   const setPhoneme = (text, index) => {
     const nextLyric = lyric.split('').map((v,i) => i === index ? text : v).join('');
     setLyric(nextLyric);
@@ -69,7 +69,7 @@ const Sequence = props => {
         }
       </div>
       <div className="sequence-body">
-        <div className="sequence-grid" style={{width: `${totalDuration / xScale}px`}} onClick={() => setEdit(false)}>
+        <div className="sequence-grid" style={{width: `${totalTicks * xScale}px`}} onClick={() => setEdit(false)}>
           { pitches.map((v,i,o) => (
             <div className="sequence-grid-octave" key={i}>
               { v.map((p,x) => (

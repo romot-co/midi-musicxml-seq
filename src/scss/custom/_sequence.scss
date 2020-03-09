@@ -74,6 +74,10 @@ $scales-width: 70px;
   width: 100%;
 }
 
+.sequence-grid {
+  min-width: 100%;
+}
+
 .sequence-grid-pitch {
   border-bottom: $border-width solid #eee;
   height: 1.5rem;

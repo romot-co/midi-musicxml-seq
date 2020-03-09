@@ -25,8 +25,8 @@ const MidiEditPage = (props) => {
         } else {
           const midi = new Midi(midiData);
           setMidi(midi);
-          setTempo(midi.header.tempos[0] || 120);
-          setLyric(midi.tracks[0].notes.map(() => { return 'あ' }).join(''));
+          setTempo(midi.header.tempos[0] && parseInt(midi.header.tempos[0].bpm) || 120);
+          setLyric(midi.tracks[0].notes.map(() => { return 'ら' }).join(''));
         }
       }
     },
@@ -34,7 +34,7 @@ const MidiEditPage = (props) => {
   );
   useEffect(
     () => {
-      document.querySelector('#sequence-key-60').scrollIntoView();
+      document.querySelector('#sequence-key-70').scrollIntoView();
     },
     [],
   );
@@ -56,36 +56,133 @@ const MidiEditPage = (props) => {
     setLyric(nextLyric);
   };
   const handleGenerateMusicXML = () => {
-    const notes = midi.tracks[trackIndex].notes.map((v,i) => {
-      return {
+    const getPitchElements = (name) => {
+      const keyName = name.slice(0,-1);
+      const octave = name.slice(-1);
+      if (keyName.length === 2) {
+        return [
+          {
+            type: 'element',
+            name: 'step',
+            elements: [
+              {
+                type: 'text',
+                text: keyName.slice(0,-1),
+              },
+            ]
+          },
+          {
+            type: 'element',
+            name: 'alter',
+            elements: [
+              {
+                type: 'text',
+                text: '+1',
+              },
+            ]
+          },
+          {
+            type: 'element',
+            name: 'octave',
+            elements: [
+              {
+                type: 'text',
+                text: octave,
+              }
+            ]
+          },
+        ]
+      } else {
+        return [
+          {
+            type: 'element',
+            name: 'step',
+            elements: [
+              {
+                type: 'text',
+                text: keyName,
+              },
+            ]
+          },
+          {
+            type: 'element',
+            name: 'octave',
+            elements: [
+              {
+                type: 'text',
+                text: octave,
+              }
+            ]
+          },
+        ]
+      }
+    };
+    const first = [
+      {
+        type: 'element',
+        name: 'attributes',
+        elements: [
+          {
+            type: 'element',
+            name: 'divisions',
+            elements: [
+              {
+                type: 'text',
+                text: '4',
+              }
+            ],
+          },
+          {
+            type: 'element',
+            name: 'key',
+            elements: [
+              {
+                type: 'element',
+                name: 'fifths',
+                elements: [
+                  {
+                    type: 'text',
+                    text: '0',
+                  }
+                ]
+              },
+            ],
+          },
+          {
+            type: 'element',
+            name: 'time',
+            elements: [
+              {
+                type: 'element',
+                name: 'beats',
+                elements: [
+                  {
+                    type: 'text',
+                    text: '4',
+                  }
+                ]
+              },
+              {
+                type: 'element',
+                name: 'beat-type',
+                elements: [
+                  {
+                    type: 'text',
+                    text: '4',
+                  }
+                ]
+              },
+            ],
+          }
+        ]
+      },
+      {
         type: 'element',
         name: 'note',
         elements: [
           {
             type: 'element',
-            name: 'pitch',
-            elements: [
-              {
-                type: 'element',
-                name: 'step',
-                elements: [
-                  {
-                    type: 'text',
-                    text: v.name.slice(0,-1),
-                  }
-                ]
-              },
-              {
-                type: 'element',
-                name: 'octave',
-                elements: [
-                  {
-                    type: 'text',
-                    text: v.name.slice(-1),
-                  }
-                ]
-              },
-            ]
+            name: 'rest',
           },
           {
             type: 'element',
@@ -93,7 +190,53 @@ const MidiEditPage = (props) => {
             elements: [
               {
                 type: 'text',
-                text: v.duration,
+                text: '16',
+              }
+            ]
+          }
+        ]
+      },
+    ];
+    const last = [
+      {
+        type: 'element',
+        name: 'note',
+        elements: [
+          {
+            type: 'element',
+            name: 'rest',
+          },
+          {
+            type: 'element',
+            name: 'duration',
+            elements: [
+              {
+                type: 'text',
+                text: '16',
+              }
+            ]
+          }
+        ]
+      },
+    ];
+    const tracks = midi.toJSON().tracks[trackIndex];
+    const notes = tracks.notes.map((v,i) => {
+      return {
+        type: 'element',
+        name: 'note',
+        elements: [
+          {
+            type: 'element',
+            name: 'pitch',
+            elements: getPitchElements(v.name),
+          },
+          {
+            type: 'element',
+            name: 'duration',
+            elements: [
+              {
+                type: 'text',
+                text: v.durationTicks,
               }
             ]
           },
@@ -115,6 +258,24 @@ const MidiEditPage = (props) => {
           },
         ]
       };
+    });
+    const division = tracks.notes[tracks.notes.length - 1].ticks + tracks.notes[tracks.notes.length - 1].durationTicks;
+    console.log(division);
+    notes.unshift({
+      type: 'element',
+      name: 'attributes',
+      elements: [
+        {
+          type: 'element',
+          name: 'divisions',
+          elements: [
+            {
+              type: 'text',
+              text: '600',
+            }
+          ],
+        }
+      ]
     });
     const json = {
       declaration: {
@@ -138,14 +299,24 @@ const MidiEditPage = (props) => {
                 {
                   type: 'element',
                   name: 'measure',
+                  elements: first,
+                },
+                {
+                  type: 'element',
+                  name: 'measure',
                   elements: notes,
-                }
+                },
+                {
+                  type: 'element',
+                  name: 'measure',
+                  elements: last,
+                },
               ],
             }
           ]}
       ],
     };
-    const xml = xmljs.json2xml(json);
+    const xml = xmljs.json2xml(json, {spaces: 2});
     const blob = new Blob([xml], {
       type: "text/plain;charset=utf-8"
     });
@@ -171,13 +342,13 @@ const MidiEditPage = (props) => {
             placeholder="テンポ"
             value={tempo}
             onChange={handleChangeTempo}
-            style={{width: '80px'}}
+            style={{width: '70px'}}
             className="mr-2"
           />
           BPM
         </div>
         <Button color="primary" onClick={handleGenerateMusicXML}>
-          MusicXML生成
+          ダウンロード
         </Button>
       </Navbar>
       <Container fluid className="px-0" style={{marginTop: '56px'}}>
@@ -196,7 +367,7 @@ const MidiEditPage = (props) => {
           <div className="sequence-controls">
             <div className="d-flex align-items-start p-3">
               <Input className="lyric-text" type="textarea" className="mr-3" value={lyric} onChange={handleChangeLyricText} />
-              <Input type="range" className="sequence-scale-range" max="0.5" min="0.05" step="0.05" value={xScale} onChange={handleChangeXScale} />
+              <Input type="range" className="sequence-scale-range" max="0.5" min="0.025" step="0.025" value={xScale} onChange={handleChangeXScale} />
             </div>
           </div>
         </Row>

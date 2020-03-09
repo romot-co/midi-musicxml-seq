@@ -32,7 +32,7 @@ const MidiUploadPage = () => {
           <Col>
             <div className="vh-100 d-flex align-items-center justify-content-center">
               <div className="text-center">
-                <h1 className="mb-3">MMXSEQ</h1>
+                <h1 className="mb-4 h3">MIDIから歌詞を入力してMusicXML化するやつ</h1>
                 <Button type="button" color="primary" onClick={handleClickUpload}>
                   MIDIファイルをアップロード
                 </Button>
