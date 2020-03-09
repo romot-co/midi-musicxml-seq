@@ -1,0 +1,135 @@
+$scales-width: 70px;
+
+.sequence {
+  display: flex;
+  padding-left: $scales-width;
+}
+
+.sequence-scales {
+  background: $white;
+  border-right: $border-width solid $border-color;
+  position: sticky;
+  left: 0;
+  margin-left: -70px;
+  width: $scales-width;
+  z-index: 10;
+}
+
+.sequence-scale {
+  box-sizing: border-box;
+}
+
+.sequence-key {
+  align-items: center;
+  box-sizing: border-box;
+  color: $text-muted;
+  display: flex;
+  font-size: 11px;
+  height: 1.5rem;
+  padding-left: .25rem;
+  position: relative;
+
+  &:last-child {
+    border-bottom: $border-width solid #ddd;
+  }
+
+  &.sequence-key-white {
+    background: $white;
+    &.sequence-key-5 {
+      border-bottom: $border-width solid #ddd;
+    }
+  }
+
+  &.sequence-key-black {
+    background: $gray-600;
+    color: $gray-200;
+
+    &:before {
+      background: $white;
+      content: "";
+      display: block;
+      height: 1.5rem;
+      position: absolute;
+      width: 1rem;
+      right: 0;
+    }
+
+    &:after {
+      background: #ddd;
+      content: "";
+      display: block;
+      height: 1px;
+      position: absolute;
+      right: 0;
+      width: 1rem;
+      top: 0.75rem;
+    }
+  }
+}
+
+.sequence-body {
+  overflow-y: auto;
+  margin-bottom: 94px;
+  position: relative;
+  width: 100%;
+}
+
+.sequence-grid-pitch {
+  border-bottom: $border-width solid #eee;
+  height: 1.5rem;
+
+  &.sequence-grid-pitch-black {
+    background: $gray-100;
+  }
+
+  &:last-child {
+    border-bottom: $border-width solid #ddd;
+  }
+}
+
+
+.note {
+  align-items: center;
+  background: $gray-300;
+  border: $border-width solid $gray-400;
+  border-radius: 2px;
+  box-sizing: border-box;
+  display: flex;
+  height: 1.5rem;
+  line-height: 1.5rem;
+  position: absolute;
+  z-index: 1;
+}
+
+.note-name {
+  color: $text-muted;
+  font-size: 11px;
+}
+
+.note-input {
+  background: $gray-300;
+  border: 0;
+  height: 100%;
+  width: 100%;
+
+  &:focus {
+    background: $white;
+    min-width: 2rem;
+  }
+}
+
+.sequence-controls {
+  background: $gray-100;
+  border-top: 1px solid #ddd;
+  padding-left: $scales-width;
+  position: fixed;
+  bottom: 0;
+  min-width: 100vw;
+  left: 0;
+  width: 100%;
+  z-index: 2;
+}
+
+.sequence-scale-range {
+  width: 100px;
+}

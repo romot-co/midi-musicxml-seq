@@ -1,0 +1,23 @@
+@import '~bootstrap/scss/functions';
+@import 'custom';
+@import '~bootstrap/scss/variables';
+@import '~bootstrap/scss/mixins';
+@import '~bootstrap/scss/bootstrap';
+
+// Override Default Components
+.navbar {
+  border-bottom: 1px solid #ddd;
+}
+
+.btn-icon {
+  height: 38px;
+  width: 38px;
+
+  svg {
+    position: relative;
+    top: -1px;
+    left: -2px;
+  }
+}
+
+// Temporaries
