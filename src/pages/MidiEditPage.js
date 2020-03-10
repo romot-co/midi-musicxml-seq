@@ -60,265 +60,121 @@ const MidiEditPage = (props) => {
       const keyName = name.slice(0,-1);
       const octave = name.slice(-1);
       if (keyName.length === 2) {
-        return [
-          {
-            type: 'element',
-            name: 'step',
-            elements: [
-              {
-                type: 'text',
-                text: keyName.slice(0,-1),
-              },
-            ]
+        return {
+          step: {
+            _text: keyName.slice(0,-1),
           },
-          {
-            type: 'element',
-            name: 'alter',
-            elements: [
-              {
-                type: 'text',
-                text: '+1',
-              },
-            ]
+          alter: {
+            _text: '+1'
           },
-          {
-            type: 'element',
-            name: 'octave',
-            elements: [
-              {
-                type: 'text',
-                text: octave,
-              }
-            ]
+          octave: {
+            _text: octave,
           },
-        ]
+        };
       } else {
-        return [
-          {
-            type: 'element',
-            name: 'step',
-            elements: [
-              {
-                type: 'text',
-                text: keyName,
-              },
-            ]
+        return {
+          step: {
+            _text: keyName,
           },
-          {
-            type: 'element',
-            name: 'octave',
-            elements: [
-              {
-                type: 'text',
-                text: octave,
-              }
-            ]
+          octave: {
+            _text: octave,
           },
-        ]
+        };
       }
     };
-    const first = [
-      {
-        type: 'element',
-        name: 'attributes',
-        elements: [
-          {
-            type: 'element',
-            name: 'divisions',
-            elements: [
-              {
-                type: 'text',
-                text: '4',
-              }
-            ],
-          },
-          {
-            type: 'element',
-            name: 'key',
-            elements: [
-              {
-                type: 'element',
-                name: 'fifths',
-                elements: [
-                  {
-                    type: 'text',
-                    text: '0',
-                  }
-                ]
-              },
-            ],
-          },
-          {
-            type: 'element',
-            name: 'time',
-            elements: [
-              {
-                type: 'element',
-                name: 'beats',
-                elements: [
-                  {
-                    type: 'text',
-                    text: '4',
-                  }
-                ]
-              },
-              {
-                type: 'element',
-                name: 'beat-type',
-                elements: [
-                  {
-                    type: 'text',
-                    text: '4',
-                  }
-                ]
-              },
-            ],
-          }
-        ]
-      },
-      {
-        type: 'element',
-        name: 'note',
-        elements: [
-          {
-            type: 'element',
-            name: 'rest',
-          },
-          {
-            type: 'element',
-            name: 'duration',
-            elements: [
-              {
-                type: 'text',
-                text: '16',
-              }
-            ]
-          }
-        ]
-      },
-    ];
-    const last = [
-      {
-        type: 'element',
-        name: 'note',
-        elements: [
-          {
-            type: 'element',
-            name: 'rest',
-          },
-          {
-            type: 'element',
-            name: 'duration',
-            elements: [
-              {
-                type: 'text',
-                text: '16',
-              }
-            ]
-          }
-        ]
-      },
-    ];
-    const tracks = midi.toJSON().tracks[trackIndex];
-    const notes = tracks.notes.map((v,i) => {
+    const raw = midi.toJSON();
+    const header = raw.header;
+    const beats = Array.isArray(header.timeSignatures) && header.timeSignatures.length > 0 ? header.timeSignatures : [4,4];
+    const track = raw.tracks[trackIndex];
+    const totalTicks = track.notes.slice(-1)[0].durationTicks + track.notes.slice(-1)[0].ticks;
+    const measureTicks = header.ppq * beats[1] * (beats[0] / beats[1]);
+    const measuresCount = Math.ceil(totalTicks / measureTicks);
+    const measures = [...Array(measuresCount).keys()].map((_,index) => {
       return {
-        type: 'element',
-        name: 'note',
-        elements: [
-          {
-            type: 'element',
-            name: 'pitch',
-            elements: getPitchElements(v.name),
-          },
-          {
-            type: 'element',
-            name: 'duration',
-            elements: [
-              {
-                type: 'text',
-                text: v.durationTicks,
+        note: track.notes.map((note,li) => {
+          const min = index * measureTicks;
+          const max = min + measureTicks;
+          if (min <= note.ticks && max > note.ticks) {
+            return {
+              _attributes: {
+                dynamics: note.velocity * 100,
+              },
+              pitch: getPitchElements(note.name),
+              duration: {
+                _text: note.durationTicks,
+              },
+              lyric: {
+                text: {
+                  _text: lyric[li],
+                }
               }
-            ]
-          },
-          {
-            type: 'element',
-            name: 'lyric',
-            elements: [
-              {
-                type: 'element',
-                name: 'text',
-                elements: [
-                  {
-                    type: 'text',
-                    text: lyric[i],
-                  }
-                ]
-              }
-            ]
-          },
-        ]
+            };
+          } else {
+            return null;
+          }
+        }).filter(v => v !== null)
       };
     });
-    const division = tracks.notes[tracks.notes.length - 1].ticks + tracks.notes[tracks.notes.length - 1].durationTicks;
-    console.log(division);
-    notes.unshift({
-      type: 'element',
-      name: 'attributes',
-      elements: [
-        {
-          type: 'element',
-          name: 'divisions',
-          elements: [
-            {
-              type: 'text',
-              text: '600',
-            }
-          ],
-        }
-      ]
-    });
     const json = {
-      declaration: {
-        attributes: {
+      _declaration: {
+        _attributes: {
           version: '1.0',
           encoding:'utf-8'
         }
       },
-      elements: [
-        {
-          type: 'element',
-          name: 'score-partwise',
-          attributes: {
-            version: '3.1',
-          },
-          elements: [
-            {
-              type: 'element',
-              name: 'part',
-              elements: [
-                {
-                  type: 'element',
-                  name: 'measure',
-                  elements: first,
+      'score-partwise': {
+        _attributes: {
+          version: '3.1',
+        },
+        part: [
+          {
+            measure: {
+              attributes: {
+                divisions: {_text: header.ppq},
+              },
+              key: {
+                fifths: {_text: '0'},
+              },
+              time: {
+                beats: {
+                  _text: beats[0],
                 },
-                {
-                  type: 'element',
-                  name: 'measure',
-                  elements: notes,
+                'beat-type': {
+                  _text: beats[1],
                 },
-                {
-                  type: 'element',
-                  name: 'measure',
-                  elements: last,
-                },
-              ],
+              },
+              sound: {
+                _attributes: {
+                  tempo: tempo,
+                }
+              },
+              note: {
+                rest: {},
+                duration: {
+                  _text: header.ppq,
+                }
+              }
             }
-          ]}
-      ],
+          },
+          {
+            measure: measures,
+          },
+          {
+            measure: {
+              note: {
+                rest: {},
+                duration: {
+                  _text: header.ppq,
+                }
+              }
+            }
+          },
+        ],
+      },
     };
-    const xml = xmljs.json2xml(json, {spaces: 2});
+    const xml = xmljs.json2xml(json, {compact: true, spaces: 2});
     const blob = new Blob([xml], {
-      type: "text/plain;charset=utf-8"
+      type: 'text/plain;charset=utf-8',
     });
     const a = document.createElement('a');
     a.download = 'score.musicxml';
