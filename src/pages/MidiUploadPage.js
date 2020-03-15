@@ -119,7 +119,6 @@ const MidiUploadPage = () => {
                 </ul>
                 <h2 className="h6 font-weight-bold">宣伝</h2>
                 AIきりたん(NEUTRINO)で<a href="https://www.nicovideo.jp/watch/sm36446234" target="_blank" rel="noopener noreferrer">オリジナル曲</a>つくっているのでよければどうぞ。
-                <script type="application/javascript" src="https://embed.nicovideo.jp/watch/sm36446234/script?w=640&h=360&from=74"></script><noscript><a href="https://www.nicovideo.jp/watch/sm36446234?from=74">AIきりたん - Neu Breath 【NEUTRINOオリジナル】</a></noscript>
               </div>
             </div>
           </Col>
