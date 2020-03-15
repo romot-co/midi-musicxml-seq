@@ -1,46 +1,9 @@
 import React, { useState } from 'react';
-import { UncontrolledTooltip } from 'reactstrap';
+import SequenceKeys from 'components/SequenceKeys';
 import Note from 'components/Note';
 
-const SequenceKeys = props => {
-  const { keys, octave } = props;
-  const mapPitch = {
-    0: 'C',
-    1: 'C#',
-    2: 'D',
-    3: 'D#',
-    4: 'E',
-    5: 'F',
-    6: 'F#',
-    7: 'G',
-    8: 'G#',
-    9: 'A',
-    10: 'A#',
-    11: 'B',
-  };
-
-  return (
-    <div className="sequence-scale">
-      { keys.map((v,i) => (
-        <React.Fragment key={i}>
-          <div className={`sequence-key sequence-key-${v.midi} sequence-key-${v.color} sequence-key-${v.pitch}`} id={`sequence-key-${v.midi}`}>
-            <span className="sequence-key-base">{mapPitch[v.pitch]}{octave + 1}</span>
-          </div>
-          {/*
-          <UncontrolledTooltip
-            target={`sequence-key-${v.midi}`} placement="right"
-          >
-            {mapPitch[v.pitch]}{octave}
-          </UncontrolledTooltip>
-          */}
-        </React.Fragment>
-      ))}
-    </div>
-  );
-};
-
 const Sequence = props => {
-  const { midi, trackIndex = 0, lyric, setLyric, xScale } = props;
+  const { midi, trackIndex = 0, transpose = 0, lyric, setLyric, xScale, yScale } = props;
   const pitches = [...Array(128).keys()]
     .reduce((a, c, i) => i % 12 === 0 ? [...a, [c]] : [...a.slice(0, -1), [...a[a.length - 1], c]], [])
     .map((v,oc) => v.map((n,i) => {
@@ -52,10 +15,16 @@ const Sequence = props => {
       }
     }).reverse()).reverse();
   const data = midi && midi.toJSON();
+  const header = data.header;
+  const beats = (data && header.timeSignatures && header.timeSignatures.length > 0) ? header.timeSignatures[0].timeSignature : [4,4];
   const notes = data && data.tracks[trackIndex].notes;
-  const totalTicks = notes ? (notes[notes.length - 1].ticks + notes[notes.length - 1].durationTicks) : 10000;
+  const totalTicks = notes ? (notes.slice(-1)[0].ticks + notes.slice(-1)[0].durationTicks) : 7680;
+  const ppq = data ? header.ppq : 480;
+  const measureTicks = ppq * beats[1] * (beats[0] / beats[1]);
+  const measuresCount = Math.ceil(totalTicks / measureTicks);
+  const maxTicks = measureTicks * measuresCount;
   const setPhoneme = (text, index) => {
-    const nextLyric = lyric.split('').map((v,i) => i === index ? text : v).join('');
+    const nextLyric = lyric.map((v,i) => i === index ? text : v);
     setLyric(nextLyric);
   };
   const [edit, setEdit] = useState(false);
@@ -69,7 +38,7 @@ const Sequence = props => {
         }
       </div>
       <div className="sequence-body">
-        <div className="sequence-grid" style={{width: `${totalTicks * xScale}px`}} onClick={() => setEdit(false)}>
+        <div className="sequence-grid-y" style={{width: `${maxTicks * xScale}px`}} onClick={() => setEdit(false)}>
           { pitches.map((v,i,o) => (
             <div className="sequence-grid-octave" key={i}>
               { v.map((p,x) => (
@@ -78,10 +47,17 @@ const Sequence = props => {
             </div>
           ))}
         </div>
+        <div className="sequence-grid-x">
+          { [...Array(measuresCount).keys()].map((_,i) => (
+            <div className="sequence-grid-measure" key={i} style={{left: `${measureTicks * xScale * (i + 1)}px`}} />
+          )) }
+        </div>
         { midi && data.tracks[trackIndex].notes.map((v,i) => (
           <Note
             note={v}
             xScale={xScale}
+            yScale={yScale}
+            transpose={transpose}
             key={i}
             phoneme={lyric[i]}
             edit={edit}

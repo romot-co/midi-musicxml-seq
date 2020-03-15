@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
+import hasSmallLetter from 'jaco/fn/hasSmallLetter';
 import { UncontrolledTooltip } from 'reactstrap';
 
 const Note = props => {
-  const { note, xScale, phoneme, lyric, index, edit, setEdit, onChange } = props;
+  const { note, xScale, yScale, transpose, phoneme, lyric, index, edit, setEdit, onChange } = props;
   const inputEl = useRef(null);
   const [value, setValue] = useState('');
   const styles = {
     left: `${note.ticks * xScale}px`,
-    bottom: `${(note.midi - 12) * 24}px`,
+    bottom: `${(note.midi - 12) * yScale + (transpose * yScale)}px`,
     width: `${note.durationTicks * xScale}px`,
   };
   const handleClick = (e) => {
@@ -19,16 +20,20 @@ const Note = props => {
   };
   const handleKeyPress = (e) => {
     const key = e.key.toLowerCase();
-    if (key === 'enter' || key === 'tab' && lyric.length < index) {
+    if (key === 'enter' || (key === 'tab' && lyric.length < index)) {
       setEdit(index + 1);
     }
   };
 
   const handleChange = (e) => {
-    setValue(e.target.value[0]);
-    if (e.target.value) {
+    setValue(e.target.value);
+    if (!e.target.value) {
+      return;
+    } else if (e.target.value.length === 1) {
       onChange(e.target.value[0], index);
-    }
+    } else if (hasSmallLetter(e.target.value)) {
+      onChange(e.target.value, index);
+    };
   };
 
   useEffect(() => {
@@ -39,7 +44,7 @@ const Note = props => {
     if (edit === index) {
       inputEl.current.select();
     }
-  }, [edit]);
+  }, [edit]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const isEdit = edit === index;
 
@@ -51,7 +56,7 @@ const Note = props => {
         onKeyPress={handleKeyPress}
         onChange={handleChange}
         className="note-input"
-        maxLength="2"
+        maxLength="3"
         ref={inputEl}
         id={`note-${index}`}
       />

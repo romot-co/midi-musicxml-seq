@@ -5,7 +5,7 @@ $scales-width: 70px;
   padding-left: $scales-width;
 }
 
-.sequence-scales {
+.sequence-keys {
   background: $white;
   border-right: $border-width solid $border-color;
   position: sticky;
@@ -74,7 +74,7 @@ $scales-width: 70px;
   width: 100%;
 }
 
-.sequence-grid {
+.sequence-grid-y {
   min-width: 100%;
 }
 
@@ -91,6 +91,19 @@ $scales-width: 70px;
   }
 }
 
+.sequence-grid-x {
+  min-height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.sequence-grid-measure {
+  box-sizing: border-box;
+  border-right: 1px solid #eee;
+  position: absolute;
+  height: 100%;
+}
 
 .note {
   align-items: center;
@@ -136,4 +149,10 @@ $scales-width: 70px;
 
 .sequence-scale-range {
   width: 100px;
+}
+
+.lyric-text {
+  &.lyric-text-expand {
+    height: 10rem;
+  }
 }

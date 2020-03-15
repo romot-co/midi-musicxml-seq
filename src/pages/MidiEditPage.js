@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { Button, Col, Container, Input, Navbar, Row } from 'reactstrap';
@@ -11,10 +11,13 @@ const MidiEditPage = (props) => {
   const history = useHistory();
   const location = useLocation();
   const [midi, setMidi] = useState(false);
-  const [tempo, setTempo] = useState(120);
   const [trackIndex, setTrackIndex] = useState(0);
+  const [tempo, setTempo] = useState(120);
+  const [transpose, setTranspose] = useState(0);
+  const [expandLyric, setExpandLyric] = useState(false);
+  const [yScale, setYScale] = useState(24); // temporary
   const [xScale, setXScale] = useState(0.25);
-  const [lyric, setLyric] = useState('');
+  const [lyric, setLyric] = useState([]);
   useEffect(
     () => {
       const midiData = location.state && location.state.midiData;
@@ -24,9 +27,12 @@ const MidiEditPage = (props) => {
           history.push('/');
         } else {
           const midi = new Midi(midiData);
+          const tempo = midi.header.tempos.length ? midi.header.tempos.slice(-1)[0].bpm : 120;
           setMidi(midi);
-          setTempo(midi.header.tempos[0] && parseInt(midi.header.tempos[0].bpm) || 120);
-          setLyric(midi.tracks[0].notes.map(() => { return 'ら' }).join(''));
+          setTrackIndex(0);
+          setTempo(tempo);
+          setLyric(midi.tracks[trackIndex].notes.map(() => 'ら'));
+          setYScale(24); //temporary
         }
       }
     },
@@ -51,69 +57,187 @@ const MidiEditPage = (props) => {
   const handleChangeXScale = (e) => {
     setXScale(e.target.value);
   };
+  const handleChangeTranspose = (e) => {
+    setTranspose(e.target.value);
+  };
   const handleChangeLyricText = (e) => {
-    const nextLyric = e.target.value.split('').map(v => v.trim()).join('');
+    const nextLyric = e.target.value.split('').map(v => v.trim());
     setLyric(nextLyric);
   };
   const handleGenerateMusicXML = () => {
     const getPitchElements = (name) => {
-      const keyName = name.slice(0,-1);
+      const isSharp = name.length === 3;
+      const step = isSharp ? name.slice(0,-2) : name.slice(0,-1);
       const octave = name.slice(-1);
-      if (keyName.length === 2) {
-        return {
-          step: {
-            _text: keyName.slice(0,-1),
-          },
-          alter: {
-            _text: '+1'
-          },
-          octave: {
-            _text: octave,
-          },
-        };
-      } else {
-        return {
-          step: {
-            _text: keyName,
-          },
-          octave: {
-            _text: octave,
-          },
-        };
-      }
+      const alterNum = isSharp ? parseInt(transpose) + 1 : parseInt(transpose);
+      const alter = alterNum > 0 ? `+${alterNum.toString()}` : alterNum.toString();
+      return {
+        step: {
+          _text: step,
+        },
+        alter: {
+          _text: alter,
+        },
+        octave: {
+          _text: octave,
+        },
+      };
     };
     const raw = midi.toJSON();
     const header = raw.header;
-    const beats = Array.isArray(header.timeSignatures) && header.timeSignatures.length > 0 ? header.timeSignatures : [4,4];
+    const beats = Array.isArray(header.timeSignatures) && header.timeSignatures.length > 0 ? header.timeSignatures[0].timeSignature : [4,4];
     const track = raw.tracks[trackIndex];
     const totalTicks = track.notes.slice(-1)[0].durationTicks + track.notes.slice(-1)[0].ticks;
     const measureTicks = header.ppq * beats[1] * (beats[0] / beats[1]);
     const measuresCount = Math.ceil(totalTicks / measureTicks);
-    const measures = [...Array(measuresCount).keys()].map((_,index) => {
-      return {
-        note: track.notes.map((note,li) => {
-          const min = index * measureTicks;
-          const max = min + measureTicks;
-          if (min <= note.ticks && max > note.ticks) {
-            return {
-              _attributes: {
-                dynamics: note.velocity * 100,
-              },
-              pitch: getPitchElements(note.name),
+    let measures = [...Array(measuresCount).keys()].map((_,measureIndex) => {
+      const min = measureIndex * measureTicks;
+      const max = min + measureTicks;
+      const measureNotes = track.notes.map((note, index) => {
+        if (max > note.ticks && (min <= note.ticks || min <= (note.ticks + note.durationTicks))) {
+          return {
+            ...note,
+            lyric: lyric[index] || '',
+          };
+        } else {
+          return null;
+        }
+      }).filter(v => v !== null);
+      let notes = [];
+      // full rest
+      if (measureNotes.length === 0) {
+        notes.push({
+          rest: {},
+          duration: {
+            _text: measureTicks
+          },
+        });
+      } else {
+        measureNotes.forEach((current, index, origin) => {
+          const before = origin[index - 1] || false;
+          const next = origin[index + 1] || false;
+          const currentLast = current.ticks + current.durationTicks;
+          const beforeLast = before ? before.ticks + before.durationTicks : false;
+
+          // First note is rest
+          if (!before && current.ticks > min) {
+            notes.push({
+              rest: {},
               duration: {
-                _text: note.durationTicks,
+                _text: current.ticks - min,
+              }
+            });
+          // First note tied stop
+          } else if (!before && current.ticks < min) {
+            notes.push({
+              _attributes: {
+                dynamics: current.velocity * 100,
+              },
+              pitch: getPitchElements(current.name),
+              duration: {
+                _text: currentLast - min,
+              },
+              tie: {
+                _attributes: {
+                  type: 'stop',
+                },
+              }
+            });
+          // Rest note between before / current
+          } else if (before && beforeLast < current.ticks) {
+            notes.push({
+              rest: {},
+              duration: {
+                _text: current.ticks - beforeLast,
+              }
+            });
+          }
+          // Last note tied start
+          if (currentLast > max) {
+            notes.push({
+              _attributes: {
+                dynamics: current.velocity * 100,
+              },
+              pitch: getPitchElements(current.name),
+              duration: {
+                _text: max - current.ticks,
               },
               lyric: {
-                text: {
-                  _text: lyric[li],
-                }
+                text: {_text: current.lyric,}
+              },
+              tie: {
+                _attributes: {
+                  type: 'start',
+                },
               }
-            };
-          } else {
-            return null;
-          }
-        }).filter(v => v !== null)
+            });
+          } else if (current.ticks >= min) {
+            // current note
+            notes.push({
+              _attributes: {
+                dynamics: current.velocity * 100,
+              },
+              pitch: getPitchElements(current.name),
+              duration: {
+                _text: current.durationTicks,
+              },
+              lyric: {
+                text: {_text: current.lyric,}
+              },
+            });
+          };
+          // last note is rest
+          if (!next && max > (currentLast)) {
+            notes.push({
+              rest: {},
+              duration: {
+                _text: max - currentLast,
+              }
+            });
+          };
+        });
+      }
+      return {
+        _attributes: {
+          number: measureIndex + 2,
+        },
+        note: notes,
       };
+    });
+
+    measures.unshift({
+      _attributes: {
+        number: '1',
+      },
+      attributes: {
+        divisions: {_text: header.ppq},
+        key: {
+          fifths: {_text: '0'},
+        },
+        time: {
+          beats: {
+            _text: beats[0],
+          },
+          'beat-type': {
+            _text: beats[1],
+          },
+        },
+        clef: {
+          sign: {_text: 'G'},
+          line: {_text: '2'},
+        },
+        sound: {
+          _attributes: {
+            tempo: tempo,
+          }
+        },
+      },
+      note: {
+        rest: {},
+        duration: {
+          _text: measureTicks,
+        }
+      },
     });
     const json = {
       _declaration: {
@@ -122,54 +246,27 @@ const MidiEditPage = (props) => {
           encoding:'utf-8'
         }
       },
+      _doctype: 'score-partwise PUBLIC "-//Recordare//DTD MusicXML 3.1 Partwise//EN" "http://www.musicxml.org/dtds/partwise.dtd"',
       'score-partwise': {
         _attributes: {
           version: '3.1',
         },
-        part: [
-          {
-            measure: {
-              attributes: {
-                divisions: {_text: header.ppq},
-              },
-              key: {
-                fifths: {_text: '0'},
-              },
-              time: {
-                beats: {
-                  _text: beats[0],
-                },
-                'beat-type': {
-                  _text: beats[1],
-                },
-              },
-              sound: {
-                _attributes: {
-                  tempo: tempo,
-                }
-              },
-              note: {
-                rest: {},
-                duration: {
-                  _text: header.ppq,
-                }
-              }
-            }
+        'part-list': {
+          'score-part': {
+            _attributes: {
+              id: `p${trackIndex}`,
+            },
+            'part-name': {
+              _text: header.name || '',
+            },
           },
-          {
-            measure: measures,
+        },
+        part: {
+          _attributes: {
+            id: `p${trackIndex}`,
           },
-          {
-            measure: {
-              note: {
-                rest: {},
-                duration: {
-                  _text: header.ppq,
-                }
-              }
-            }
-          },
-        ],
+          measure: measures,
+        },
       },
     };
     const xml = xmljs.json2xml(json, {compact: true, spaces: 2});
@@ -192,6 +289,7 @@ const MidiEditPage = (props) => {
           <Button className="rounded-circle mr-3 btn-icon" color="light" onClick={handleClose}>
             <FiX />
           </Button>
+          <span className="mr-2">BPM</span>
           <Input
             type="number"
             color="light"
@@ -199,30 +297,40 @@ const MidiEditPage = (props) => {
             value={tempo}
             onChange={handleChangeTempo}
             style={{width: '70px'}}
-            className="mr-2"
+            className="mr-3"
           />
-          BPM
+          <span className="mr-2">キー</span>
+          <Input
+            type="number"
+            min="-24"
+            max="24"
+            value={transpose}
+            style={{width: '70px'}}
+            onChange={handleChangeTranspose}
+          />
         </div>
         <Button color="primary" onClick={handleGenerateMusicXML}>
           ダウンロード
         </Button>
       </Navbar>
       <Container fluid className="px-0" style={{marginTop: '56px'}}>
-        <Row className="no-gutters">
+        <Row className="no-gutters" onClick={() => setExpandLyric(false)}>
           <Col>
             <Sequence
               midi={midi}
               trackIndex={trackIndex}
+              transpose={transpose}
               lyric={lyric}
-              xScale={xScale}
               setLyric={setLyric}
+              xScale={xScale}
+              yScale={yScale}
             />
           </Col>
         </Row>
         <Row>
           <div className="sequence-controls">
             <div className="d-flex align-items-start p-3">
-              <Input className="lyric-text" type="textarea" className="mr-3" value={lyric} onChange={handleChangeLyricText} />
+              <Input className={`lyric-text mr-3 ${expandLyric ? 'lyric-text-expand' : ''}`} type="textarea" value={lyric.join('')} onClick={() => setExpandLyric(true)} onChange={handleChangeLyricText} />
               <Input type="range" className="sequence-scale-range" max="0.5" min="0.025" step="0.025" value={xScale} onChange={handleChangeXScale} />
             </div>
           </div>
