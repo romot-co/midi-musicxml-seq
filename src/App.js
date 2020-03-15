@@ -1,22 +1,22 @@
 import React from 'react';
 import {
-  BrowserRouter as Router,
+  BrowserRouter,
   Switch,
   Route,
 } from "react-router-dom";
-import 'scss/index.scss';
 
 import MidiUploadPage from 'pages/MidiUploadPage';
 import MidiEditPage from 'pages/MidiEditPage';
 
 const Routes = () => {
   return (
-    <Router>
+    <BrowserRouter basename={process.env.PUBLIC_URL}>
       <Switch>
         <Route exact path="/" component={MidiUploadPage} />
-        <Route exact path="/edit" component={MidiEditPage} />
+        <Route path="/edit" component={MidiEditPage} />
+        <Route component={() => (<div>404 Not found</div>)} />
       </Switch>
-    </Router>
+    </BrowserRouter>
   );
 }
 
