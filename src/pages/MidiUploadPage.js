@@ -30,7 +30,7 @@ const MidiUploadPage = () => {
       <Container>
         <Row>
           <Col>
-            <div className="d-flex align-items-center justify-content-center" style={{height: '80vh'}}>
+            <div className="d-flex align-items-center justify-content-center" style={{height: '60vh'}}>
               <div className="text-center">
                 <div className="mb-5">
                   <h1 className="h3">MIDIから歌詞を入力してMusicXMLにするやつ</h1>
@@ -50,7 +50,7 @@ const MidiUploadPage = () => {
               </div>
             </div>
             <div className="text-center mb-4">
-              <img src="./temp-scr.png" alt="temp-scr" style={{height: '25vh'}} />
+              <img src="./temp-scr.png" alt="temp-scr" style={{height: '30vh'}} />
             </div>
             <div className="text-muted text-center small">
               <div>概要と注意点を読んで自己責任でご利用ください</div>
@@ -66,8 +66,15 @@ const MidiUploadPage = () => {
                 <h2 className="h6 font-weight-bold">概要</h2>
                 <ul>
                   <li>MIDIファイルに歌詞をまとめて/個別に入力してNEUTRINOで使えるMusicXMLにします</li>
-                  <li>MIDIファイルはどこにもアップロードされません</li>
+                  <li>MIDIファイルはどこにもアップロードされません(PC内で動きます)</li>
                   <li>Reactで適当につくっています</li>
+                </ul>
+                <h2 className="h6 font-weight-bold">使い方</h2>
+                <ul>
+                  <li>上の青いボタンからMIDIファイルを指定</li>
+                  <li>ノートをクリックし歌詞入力＆EnterあるいはTabキーで次へ移動</li>
+                  <li>あるいは画面下部の歌詞入力でまとめて歌詞入力</li>
+                  <li>ダウンロードボタンでMusicXMLファイルをダウンロード</li>
                 </ul>
                 <h2 className="h6 font-weight-bold">注意点</h2>
                 <ul>
@@ -75,6 +82,7 @@ const MidiUploadPage = () => {
                   <li>NEUTRINOでもおかしいかもしれません</li>
                   <li>いまのところMIDIトラックは1番目固定です</li>
                   <li>いまのところ単音のみの対応です</li>
+                  <li>MIDIノートの追加・変更・削除はできません</li>
                 </ul>
                 <h2 className="h6 font-weight-bold">変更予定</h2>
                 <ul>
@@ -110,7 +118,7 @@ const MidiUploadPage = () => {
                   <li><a href="http://usermanuals.musicxml.com/MusicXML/MusicXML.htm#license.htm%3FTocPath%3D_____7">MusicXML3.0 Public License</a></li>
                 </ul>
                 <h2 className="h6 font-weight-bold">宣伝</h2>
-                AIきりたん(NEUTRINO)でオリジナル曲つくっているのでよければどうぞ。
+                AIきりたん(NEUTRINO)で<a href="https://www.nicovideo.jp/watch/sm36446234" target="_blank" rel="noopener noreferrer">オリジナル曲</a>つくっているのでよければどうぞ。
                 <script type="application/javascript" src="https://embed.nicovideo.jp/watch/sm36446234/script?w=640&h=360&from=74"></script><noscript><a href="https://www.nicovideo.jp/watch/sm36446234?from=74">AIきりたん - Neu Breath 【NEUTRINOオリジナル】</a></noscript>
               </div>
             </div>
