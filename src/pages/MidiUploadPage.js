@@ -30,11 +30,14 @@ const MidiUploadPage = () => {
       <Container>
         <Row>
           <Col>
-            <div className="vh-100 d-flex align-items-center justify-content-center">
+            <div className="d-flex align-items-center justify-content-center" style={{height: '80vh'}}>
               <div className="text-center">
-                <h1 className="mb-4 h3">MIDIから歌詞を入力してMusicXML化するやつ</h1>
-                <Button type="button" color="primary" onClick={handleClickUpload}>
-                  MIDIファイルをアップロード
+                <div className="mb-5">
+                  <h1 className="h3">MIDIから歌詞を入力してMusicXMLにするやつ</h1>
+                  <div className="text-muted small">AIきりたん(NEUTRINO)に歌詞入力をしやすくする目的で<span className="font-weight-bold">開発実験中</span></div>
+                </div>
+                <Button type="button" color="primary" size="lg" className="font-weight-bold" onClick={handleClickUpload}>
+                  MIDIファイルから歌詞入力する
                 </Button>
                 <input
                   ref={fileInputRef}
@@ -44,6 +47,71 @@ const MidiUploadPage = () => {
                   accept="audio/midi, audio/x-midi"
                   onChange={handleChangeFile}
                 />
+              </div>
+            </div>
+            <div className="text-center mb-4">
+              <img src="./temp-scr.png" alt="temp-scr" style={{height: '25vh'}} />
+            </div>
+            <div className="text-muted text-center small">
+              <div>概要と注意点を読んで自己責任でご利用ください</div>
+              <div>ご連絡は <a href="https://twitter.com/romotco" target="_blank" rel="noopener noreferrer">Twitter @romotco</a> まで</div>
+            </div>
+          </Col>
+        </Row>
+        <hr className="mb-5" />
+        <Row>
+          <Col>
+            <div className="d-flex my-2">
+              <div className="mx-auto">
+                <h2 className="h6 font-weight-bold">概要</h2>
+                <ul>
+                  <li>MIDIファイルに歌詞をまとめて/個別に入力してNEUTRINOで使えるMusicXMLにします</li>
+                  <li>MIDIファイルはどこにもアップロードされません</li>
+                  <li>Reactで適当につくっています</li>
+                </ul>
+                <h2 className="h6 font-weight-bold">注意点</h2>
+                <ul>
+                  <li>NEUTRINOでしか鳴りません</li>
+                  <li>NEUTRINOでもおかしいかもしれません</li>
+                  <li>いまのところMIDIトラックは1番目固定です</li>
+                  <li>いまのところ単音のみの対応です</li>
+                </ul>
+                <h2 className="h6 font-weight-bold">変更予定</h2>
+                <ul>
+                  <li>ローマ字(英字)による入力</li>
+                  <li>MusicXMLの仕様準拠(MuseScoreとの互換)</li>
+                  <li>重なったノートの修正や和音への対応</li>
+                  <li>MIDIトラックの選択</li>
+                  <li>デザインをよくする</li>
+                </ul>
+                <h2 className="h6 font-weight-bold">夢</h2>
+                <ul>
+                  <li>MIDIシーケンサ化</li>
+                  <li>VSQ対応</li>
+                  <li>ReactNativeとかで直接NEUTRINOから出力できないかなあ</li>
+                </ul>
+              </div>
+            </div>
+          </Col>
+        </Row>
+        <hr className="mb-5" />
+        <Row>
+          <Col>
+            <div className="d-flex my-2 mb-5">
+              <div className="mx-auto">
+                <h2 className="h6 font-weight-bold">謝辞</h2>
+                <ul>
+                  <li>
+                    <a href="https://twitter.com/tnantoka" target="_blank" rel="noopener noreferrer">@tnantoka</a>さまの<a href="https://neutrino.tnantoka.com/">NEUTRINOのブログ</a>を大きく参考にさせていただいております。<br />ありがとうございます。
+                  </li>
+                </ul>
+                <h2 className="h6 font-weight-bold">MusicXML</h2>
+                <ul>
+                  <li><a href="http://usermanuals.musicxml.com/MusicXML/MusicXML.htm#license.htm%3FTocPath%3D_____7">MusicXML3.0 Public License</a></li>
+                </ul>
+                <h2 className="h6 font-weight-bold">宣伝</h2>
+                AIきりたん(NEUTRINO)でオリジナル曲つくっているのでよければどうぞ。
+                <script type="application/javascript" src="https://embed.nicovideo.jp/watch/sm36446234/script?w=640&h=360&from=74"></script><noscript><a href="https://www.nicovideo.jp/watch/sm36446234?from=74">AIきりたん - Neu Breath 【NEUTRINOオリジナル】</a></noscript>
               </div>
             </div>
           </Col>

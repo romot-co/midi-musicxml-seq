@@ -3,6 +3,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { Button, Col, Container, Input, Navbar, Row } from 'reactstrap';
 import Sequence from 'components/Sequence';
+import LyricEdit from 'components/LyricEdit';
 import { Midi } from '@tonejs/midi';
 import { FiX } from "react-icons/fi";
 import xmljs from 'xml-js';
@@ -60,10 +61,6 @@ const MidiEditPage = (props) => {
   const handleChangeTranspose = (e) => {
     setTranspose(e.target.value);
   };
-  const handleChangeLyricText = (e) => {
-    const nextLyric = e.target.value.split('').map(v => v.trim());
-    setLyric(nextLyric);
-  };
   const handleGenerateMusicXML = () => {
     const getPitchElements = (name) => {
       const isSharp = name.length === 3;
@@ -94,7 +91,7 @@ const MidiEditPage = (props) => {
       const min = measureIndex * measureTicks;
       const max = min + measureTicks;
       const measureNotes = track.notes.map((note, index) => {
-        if (max > note.ticks && (min <= note.ticks || min <= (note.ticks + note.durationTicks))) {
+        if (max > note.ticks && (min <= note.ticks || min < (note.ticks + note.durationTicks))) {
           return {
             ...note,
             lyric: lyric[index] || '',
@@ -226,6 +223,11 @@ const MidiEditPage = (props) => {
           sign: {_text: 'G'},
           line: {_text: '2'},
         },
+      },
+      direction: {
+        _attributes: {
+          placement: 'above',
+        },
         sound: {
           _attributes: {
             tempo: tempo,
@@ -330,8 +332,22 @@ const MidiEditPage = (props) => {
         <Row>
           <div className="sequence-controls">
             <div className="d-flex align-items-start p-3">
-              <Input className={`lyric-text mr-3 ${expandLyric ? 'lyric-text-expand' : ''}`} type="textarea" value={lyric.join('')} onClick={() => setExpandLyric(true)} onChange={handleChangeLyricText} />
-              <Input type="range" className="sequence-scale-range" max="0.5" min="0.025" step="0.025" value={xScale} onChange={handleChangeXScale} />
+              <LyricEdit
+                lyric={lyric}
+                setLyric={setLyric}
+                expand={expandLyric}
+                setExpand={setExpandLyric}
+                limit={midi ? midi.tracks[trackIndex].notes.length : 0}
+              />
+              <Input
+                type="range"
+                className="sequence-scale-range"
+                max="0.5"
+                min="0.025"
+                step="0.025"
+                value={xScale}
+                onChange={handleChangeXScale}
+              />
             </div>
           </div>
         </Row>
