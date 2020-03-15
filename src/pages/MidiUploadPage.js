@@ -34,7 +34,7 @@ const MidiUploadPage = () => {
               <div className="text-center">
                 <div className="mb-5">
                   <h1 className="h3">MIDIから歌詞を入力してMusicXMLにするやつ</h1>
-                  <div className="text-muted small">AIきりたん(NEUTRINO)に歌詞入力をしやすくする目的で<span className="text-warning font-weight-bold">開発実験中</span></div>
+                  <div className="text-muted small">AIきりたん(NEUTRINO)に歌詞入力をしやすくする目的で<span className="text-danger font-weight-bold">開発実験中</span></div>
                 </div>
                 <Button type="button" color="primary" size="lg" className="font-weight-bold" onClick={handleClickUpload}>
                   MIDIファイルから歌詞入力をはじめる
