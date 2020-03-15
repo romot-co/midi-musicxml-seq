@@ -54,7 +54,7 @@ const MidiUploadPage = () => {
             </div>
             <div className="text-muted text-center small">
               <div>概要と注意点を読んで自己責任でご利用ください</div>
-              <div>ご連絡は <a href="https://twitter.com/romotco" target="_blank" rel="noopener noreferrer">Twitter @romotco</a> まで</div>
+              <div>バグ報告 <a href="https://twitter.com/romotco" target="_blank" rel="noopener noreferrer">Twitter @romotco</a> までいただけると助かります</div>
             </div>
           </Col>
         </Row>
@@ -80,7 +80,7 @@ const MidiUploadPage = () => {
                 <ul>
                   <li>NEUTRINOでしか鳴りません</li>
                   <li>NEUTRINOでもおかしいかもしれません</li>
-                  <li>いまのところひらがなのみです</li>
+                  <li>いまのところ<span className="font-weight-bold">ひらがなのみ</span>です</li>
                   <li>いまのところMIDIトラックは1番目固定です</li>
                   <li>いまのところ単音のみの対応です(ノートの重なりや和音は死にます)</li>
                   <li>MIDIノートの追加・変更・削除はできません</li>
@@ -98,7 +98,7 @@ const MidiUploadPage = () => {
                 <ul>
                   <li>MIDIシーケンサ化</li>
                   <li>VSQ対応</li>
-                  <li>ReactNativeとかで直接NEUTRINOから出力できないかなあ</li>
+                  <li>ReactNativeとかで直接NEUTRINOから出力できないかな</li>
                 </ul>
               </div>
             </div>
