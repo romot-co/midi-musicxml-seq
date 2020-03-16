@@ -5,6 +5,7 @@ import { Button, Col, Container, Input, Navbar, Row } from 'reactstrap';
 import Sequence from 'components/Sequence';
 import LyricEdit from 'components/LyricEdit';
 import { Midi } from '@tonejs/midi';
+import { midiNumberToPitchMusicXML } from 'utils/convert';
 import { FiX } from "react-icons/fi";
 import xmljs from 'xml-js';
 
@@ -62,24 +63,6 @@ const MidiEditPage = (props) => {
     setTranspose(e.target.value);
   };
   const handleGenerateMusicXML = () => {
-    const getPitchElements = (name) => {
-      const isSharp = name.length === 3;
-      const step = isSharp ? name.slice(0,-2) : name.slice(0,-1);
-      const octave = name.slice(-1);
-      const alterNum = isSharp ? parseInt(transpose) + 1 : parseInt(transpose);
-      const alter = alterNum > 0 ? `+${alterNum.toString()}` : alterNum.toString();
-      return {
-        step: {
-          _text: step,
-        },
-        alter: {
-          _text: alter,
-        },
-        octave: {
-          _text: octave,
-        },
-      };
-    };
     const raw = midi.toJSON();
     const header = raw.header;
     const beats = Array.isArray(header.timeSignatures) && header.timeSignatures.length > 0 ? header.timeSignatures[0].timeSignature : [4,4];
@@ -116,7 +99,7 @@ const MidiEditPage = (props) => {
           const currentLast = current.ticks + current.durationTicks;
           const beforeLast = before ? before.ticks + before.durationTicks : false;
 
-          // First note is rest
+          // First note = rest
           if (!before && current.ticks > min) {
             notes.push({
               rest: {},
@@ -124,13 +107,13 @@ const MidiEditPage = (props) => {
                 _text: current.ticks - min,
               }
             });
-          // First note tied stop
+          // First note = tied stop
           } else if (!before && current.ticks < min) {
             notes.push({
               _attributes: {
                 dynamics: current.velocity * 100,
               },
-              pitch: getPitchElements(current.name),
+              pitch: midiNumberToPitchMusicXML(current.midi),
               duration: {
                 _text: currentLast - min,
               },
@@ -140,7 +123,7 @@ const MidiEditPage = (props) => {
                 },
               }
             });
-          // Rest note between before / current
+          // Rest note between before to current
           } else if (before && beforeLast < current.ticks) {
             notes.push({
               rest: {},
@@ -149,13 +132,13 @@ const MidiEditPage = (props) => {
               }
             });
           }
-          // Last note tied start
+          // Last note = tied start
           if (currentLast > max) {
             notes.push({
               _attributes: {
                 dynamics: current.velocity * 100,
               },
-              pitch: getPitchElements(current.name),
+              pitch: midiNumberToPitchMusicXML(current.midi),
               duration: {
                 _text: max - current.ticks,
               },
@@ -174,7 +157,7 @@ const MidiEditPage = (props) => {
               _attributes: {
                 dynamics: current.velocity * 100,
               },
-              pitch: getPitchElements(current.name),
+              pitch: midiNumberToPitchMusicXML(current.midi),
               duration: {
                 _text: current.durationTicks,
               },
@@ -183,7 +166,7 @@ const MidiEditPage = (props) => {
               },
             });
           };
-          // last note is rest
+          // last note = rest
           if (!next && max > (currentLast)) {
             notes.push({
               rest: {},
