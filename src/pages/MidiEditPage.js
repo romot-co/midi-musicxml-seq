@@ -53,6 +53,9 @@ const MidiEditPage = (props) => {
       history.push('/');
     }
   };
+  const handleChangeTrack = (e) => {
+    setTrackIndex(e.target.value);
+  };
   const handleChangeTempo = (e) => {
     setTempo(e.target.value);
   };
@@ -274,6 +277,16 @@ const MidiEditPage = (props) => {
           <Button className="rounded-circle mr-3 btn-icon" color="light" onClick={handleClose}>
             <FiX />
           </Button>
+          <span className="mr-2">トラック</span>
+          <Input
+            type="select"
+            color="light"
+            onChange={handleChangeTrack}
+            style={{width: '120px'}}
+            className="mr-3"
+          >
+            {midi && midi.toJSON().tracks.map((v,i) => <option key={i} value={i}>{i+1}: {v.name}</option>)}
+          </Input>
           <span className="mr-2">BPM</span>
           <Input
             type="number"
