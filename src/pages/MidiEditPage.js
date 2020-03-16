@@ -116,7 +116,7 @@ const MidiEditPage = (props) => {
               _attributes: {
                 dynamics: current.velocity * 100,
               },
-              pitch: midiNumberToPitchMusicXML(current.midi),
+              pitch: midiNumberToPitchMusicXML(current.midi, transpose),
               duration: {
                 _text: currentLast - min,
               },
@@ -141,7 +141,7 @@ const MidiEditPage = (props) => {
               _attributes: {
                 dynamics: current.velocity * 100,
               },
-              pitch: midiNumberToPitchMusicXML(current.midi),
+              pitch: midiNumberToPitchMusicXML(current.midi, transpose),
               duration: {
                 _text: max - current.ticks,
               },
@@ -156,11 +156,12 @@ const MidiEditPage = (props) => {
             });
           } else if (current.ticks >= min) {
             // current note
+            //const currentDurationTicks = next && next.ticks >= currentLast ? current.durationTicks - (next.ticks - currentLast) : current.durationTicks;
             notes.push({
               _attributes: {
                 dynamics: current.velocity * 100,
               },
-              pitch: midiNumberToPitchMusicXML(current.midi),
+              pitch: midiNumberToPitchMusicXML(current.midi, transpose),
               duration: {
                 _text: current.durationTicks,
               },
