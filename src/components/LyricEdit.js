@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Input } from 'reactstrap';
 import hasSmallLetter from 'jaco/fn/hasSmallLetter';
+import isOnlyHiragana from 'jaco/fn/isOnlyHiragana';
 
 const LyricEdit = props => {
   const { lyric, setLyric, expand, setExpand, limit } = props;
@@ -10,6 +11,7 @@ const LyricEdit = props => {
     let nextLyric = [];
     trimed.split('').forEach((current,i,origin) => {
       const next = origin[i+1] || false;
+      if (!isOnlyHiragana(current)) { return; }
       if (hasSmallLetter(current)) { return; }
       if (next && hasSmallLetter(next)) {
         nextLyric.push(current + next);
