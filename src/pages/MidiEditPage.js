@@ -1,17 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
+import React, { useState, useRef, useEffect } from 'react';
+//import { useHistory, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { Button, Col, Container, Input, Navbar, Row } from 'reactstrap';
 import Sequence from 'components/Sequence';
 import LyricEdit from 'components/LyricEdit';
+import HelpModal from 'modals/HelpModal';
 import { Midi } from '@tonejs/midi';
 import { midiNumberToPitchMusicXML } from 'utils/convert';
-import { FiX } from "react-icons/fi";
+// import { FiPlusCircle } from "react-icons/fi";
 import xmljs from 'xml-js';
 
 const MidiEditPage = (props) => {
-  const history = useHistory();
-  const location = useLocation();
+  //const history = useHistory();
+  //const location = useLocation();
+  const fileInputRef = useRef(null);
   const [midi, setMidi] = useState(false);
   const [trackIndex, setTrackIndex] = useState(0);
   const [tempo, setTempo] = useState(120);
@@ -19,14 +21,26 @@ const MidiEditPage = (props) => {
   const [expandLyric, setExpandLyric] = useState(false);
   const [yScale, setYScale] = useState(24); // temporary
   const [xScale, setXScale] = useState(0.25);
-  const [lyric, setLyric] = useState([]);
+  const [lyric, setLyric] = useState(['']);
+  const [showHelp, setShowHelp] = useState(true);
   useEffect(
     () => {
-      const midiData = location.state && location.state.midiData;
+      document.querySelector('#sequence-key-70').scrollIntoView();
+    },
+    [],
+  );
+  const handleClickUpload = () => {
+    fileInputRef.current.click();
+  };
+  const handleChangeFile = (e) => {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+    reader.readAsArrayBuffer(file);
+    reader.onload = (e) => {
+      const midiData = e.target.result;
       if (midiData) {
         if (midiData.tracks < 1) {
           window.alert('トラックがありません');
-          history.push('/');
         } else {
           const midi = new Midi(midiData);
           const tempo = midi.header.tempos.length ? midi.header.tempos.slice(-1)[0].bpm : 120;
@@ -35,23 +49,13 @@ const MidiEditPage = (props) => {
           setTempo(tempo);
           setLyric(midi.tracks[trackIndex].notes.map(() => 'ら'));
           setYScale(24); //temporary
+          document.querySelector('#sequence-key-70').scrollIntoView();
         }
       }
-    },
-    [location.state], // eslint-disable-line react-hooks/exhaustive-deps
-  );
-  useEffect(
-    () => {
-      document.querySelector('#sequence-key-70').scrollIntoView();
-    },
-    [],
-  );
-
-  const handleClose = () => {
-    if (window.confirm('データは保存されません')) {
-      setMidi(false);
-      history.push('/');
-    }
+    };
+    reader.onerror = (e) => {
+      window.alert('ファイル読み込みに失敗しました');
+    };
   };
   const handleChangeTrack = (e) => {
     setTrackIndex(e.target.value);
@@ -275,9 +279,17 @@ const MidiEditPage = (props) => {
       </Helmet>
       <Navbar color="light" light className="fixed-top">
         <div className="d-flex align-items-center mr-auto">
-          <Button className="rounded-circle mr-3 btn-icon" color="light" onClick={handleClose}>
-            <FiX />
+          <Button type="button" color="secondary" className="mr-3" onClick={handleClickUpload}>
+            MIDI変更
           </Button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            id="midi-file-input"
+            className="d-none"
+            accept="audio/midi, audio/x-midi"
+            onChange={handleChangeFile}
+          />
           <span className="mr-2">トラック</span>
           <Input
             type="select"
@@ -349,6 +361,13 @@ const MidiEditPage = (props) => {
           </div>
         </Row>
       </Container>
+      <HelpModal
+        show={showHelp}
+        handleStart={() => {
+          setShowHelp(false);
+          fileInputRef.current.click();
+        }}
+      />
     </>
   )
 }

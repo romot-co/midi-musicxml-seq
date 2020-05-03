@@ -5,15 +5,15 @@ import {
   Route,
 } from "react-router-dom";
 
-import MidiUploadPage from 'pages/MidiUploadPage';
+//import MidiUploadPage from 'pages/MidiUploadPage';
 import MidiEditPage from 'pages/MidiEditPage';
 
 const Routes = () => {
   return (
     <BrowserRouter basename={process.env.PUBLIC_URL}>
       <Switch>
-        <Route exact path="/" component={MidiUploadPage} />
-        <Route path="/edit" component={MidiEditPage} />
+        {/* <Route exact path="/" component={MidiUploadPage} /> */}
+        <Route exact path="/" component={MidiEditPage} />
         <Route component={() => (<div>404 Not found</div>)} />
       </Switch>
     </BrowserRouter>
