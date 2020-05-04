@@ -1,5 +1,6 @@
 import React from 'react';
 import { Button, Col, Modal, ModalBody, ModalHeader, ModalFooter, Row } from 'reactstrap';
+import { t } from "lisan";
 
 const HelpModal = props => {
   const {
@@ -8,26 +9,25 @@ const HelpModal = props => {
   } = props;
   return (
     <Modal isOpen={show} size="lg">
-      <ModalHeader>MIDIに歌詞入力してMusicXMLにするやつ</ModalHeader>
+      <ModalHeader>{t('title')}</ModalHeader>
       <ModalBody>
         <Row>
           <Col lg="10" className="mx-auto text-sm">
-            <h2 className="h6 font-weight-bold">概要</h2>
+            <h2 className="h6 font-weight-bold">{t('helpModal.about')}</h2>
             <ul>
-              <li>MIDIに歌詞入力してNEUTRINOで使えるMusicXMLにします</li>
-              <li>MIDIはどこにもアップロードされません(PC内で動きます)</li>
-              <li>React+Bootstrapで自分用に適当につくっています</li>
+              <li>{t('helpModal.about1')}</li>
+              <li>{t('helpModal.about2')}</li>
+              <li>{t('helpModal.about3')}</li>
             </ul>
-            <h2 className="h6 font-weight-bold">注意点</h2>
+            <h2 className="h6 font-weight-bold">{t('helpModal.note')}</h2>
             <ul>
-              <li>単音のみの対応です(ノートの重なりや和音は未考慮)</li>
-              <li>MIDIノートの追加・変更・削除はできません</li>
+              <li>{t('helpModal.note1')}</li>
+              <li>{t('helpModal.note2')}</li>
             </ul>
-            <h2 className="h6 font-weight-bold">謝辞など</h2>
+            <h2 className="h6 font-weight-bold">{t('helpModal.misc')}</h2>
             <ul>
               <li>
-                連絡先:
-                <a href="https://twitter.com/romotco" target="_blank" rel="noopener noreferrer">@romotco</a>
+                {t('helpModal.misc1', {link: <a href="https://twitter.com/romotco" key="contact" target="_blank" rel="noopener noreferrer">@romotco</a>})}
               </li>
               <li>
                 <a href="https://twitter.com/tnantoka" target="_blank" rel="noopener noreferrer">@tnantoka</a>さまの<a href="https://neutrino.tnantoka.com/">NEUTRINOのブログ</a>を大きく参考にさせていただいております。<br />ありがとうございます。
@@ -45,7 +45,7 @@ const HelpModal = props => {
         </Row>
       </ModalBody>
       <ModalFooter>
-        <Button color="primary" onClick={handleStart}>MIDIをアップロードしてはじめる</Button>
+        <Button color="primary" onClick={handleStart}>{t('helpModal.start')}</Button>
       </ModalFooter>
     </Modal>
   )

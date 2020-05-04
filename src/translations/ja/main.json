@@ -1,0 +1,23 @@
+{
+  "locale": "ja",
+  "entries": {
+    "title": "MIDIに歌詞入力してMusicXMLにするやつ - α版",
+    "changeMidi": "MIDI変更",
+    "track": "トラック",
+    "bpm": "BPM",
+    "transpose": "キー",
+    "download": "ダウンロード",
+    "message.noTracks": "トラックがありません",
+    "message.failedToLoadFile": "ファイルが読み込みませんでした",
+    "helpModal.about": "概要",
+    "helpModal.about1": "MIDIに歌詞入力してNEUTRINOで使えるMusicXMLにします",
+    "helpModal.about2": "MIDIはどこにもアップロードされません(PC内で動きます)",
+    "helpModal.about3": "自分で使うためにReact+Bootstrapで適当につくっています",
+    "helpModal.note": "ノート",
+    "helpModal.note1": "単音のみの対応です(ノートの重なりや和音は未考慮)",
+    "helpModal.note2": "MIDIノートの追加・変更・削除はできません",
+    "helpModal.misc": "Misc",
+    "helpModal.misc1": "連絡先: ${link}",
+    "helpModal.start": "MIDIファイルをアップロードしてはじめる"
+  }
+}

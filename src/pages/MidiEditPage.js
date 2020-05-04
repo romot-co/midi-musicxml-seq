@@ -7,12 +7,15 @@ import LyricEdit from 'components/LyricEdit';
 import HelpModal from 'modals/HelpModal';
 import { Midi } from '@tonejs/midi';
 import { midiNumberToPitchMusicXML } from 'utils/convert';
+import { lisan, t } from "lisan";
 // import { FiPlusCircle } from "react-icons/fi";
 import xmljs from 'xml-js';
 
 const MidiEditPage = (props) => {
   //const history = useHistory();
   //const location = useLocation();
+  const [loaded, setLoaded] = useState(false);
+  const [language, setLanguage] = useState((window.navigator.language === "ja" || window.navigator.language === "ja-JP") ? 'ja' : 'en');
   const fileInputRef = useRef(null);
   const [midi, setMidi] = useState(false);
   const [trackIndex, setTrackIndex] = useState(0);
@@ -22,13 +25,21 @@ const MidiEditPage = (props) => {
   const [yScale, setYScale] = useState(24); // temporary
   const [xScale, setXScale] = useState(0.25);
   const [lyric, setLyric] = useState(['']);
-  const [showHelp, setShowHelp] = useState(true);
-  useEffect(
-    () => {
+  const [showHelp, setShowHelp] = useState(false);
+  useEffect(() => {
+    updateLanguage(language);
+  }, [language]);
+  const updateLanguage = (lang) => {
+    lisan.setLocaleName(lang);
+
+    import(`../../public/dictionaries/${lang}/main`).then((dict) => {
+      lisan.add(dict);
+      setLoaded(true);
+      setLanguage(lang);
+      setShowHelp(true);
       document.querySelector('#sequence-key-70').scrollIntoView();
-    },
-    [],
-  );
+    });
+  };
   const handleClickUpload = () => {
     fileInputRef.current.click();
   };
@@ -40,7 +51,7 @@ const MidiEditPage = (props) => {
       const midiData = e.target.result;
       if (midiData) {
         if (midiData.tracks < 1) {
-          window.alert('トラックがありません');
+          window.alert(t('message.noTracks'));
         } else {
           const midi = new Midi(midiData);
           const tempo = midi.header.tempos.length ? midi.header.tempos.slice(-1)[0].bpm : 120;
@@ -54,7 +65,7 @@ const MidiEditPage = (props) => {
       }
     };
     reader.onerror = (e) => {
-      window.alert('ファイル読み込みに失敗しました');
+      window.alert(t('message.failedToLoadFile'));
     };
   };
   const handleChangeTrack = (e) => {
@@ -271,105 +282,109 @@ const MidiEditPage = (props) => {
     a.href = URL.createObjectURL(blob);
     a.click();
   };
-  return (
-    <>
-      <Helmet>
-        <title>MIDI編集</title>
-        <body />
-      </Helmet>
-      <Navbar color="light" light className="fixed-top">
-        <div className="d-flex align-items-center mr-auto">
-          <Button type="button" color="secondary" className="mr-3" onClick={handleClickUpload}>
-            MIDI変更
-          </Button>
-          <input
-            ref={fileInputRef}
-            type="file"
-            id="midi-file-input"
-            className="d-none"
-            accept="audio/midi, audio/x-midi"
-            onChange={handleChangeFile}
-          />
-          <span className="mr-2">トラック</span>
-          <Input
-            type="select"
-            color="light"
-            onChange={handleChangeTrack}
-            style={{width: '120px'}}
-            className="mr-3"
-          >
-            {midi && midi.toJSON().tracks.map((v,i) => <option key={i} value={i}>{i+1}: {v.name}</option>)}
-          </Input>
-          <span className="mr-2">BPM</span>
-          <Input
-            type="number"
-            color="light"
-            placeholder="テンポ"
-            value={tempo}
-            onChange={handleChangeTempo}
-            style={{width: '70px'}}
-            className="mr-3"
-          />
-          <span className="mr-2">キー</span>
-          <Input
-            type="number"
-            min="-24"
-            max="24"
-            value={transpose}
-            style={{width: '70px'}}
-            onChange={handleChangeTranspose}
-          />
-        </div>
-        <Button color="primary" onClick={handleGenerateMusicXML}>
-          ダウンロード
-        </Button>
-      </Navbar>
-      <Container fluid className="px-0" style={{marginTop: '56px'}}>
-        <Row className="no-gutters" onClick={() => setExpandLyric(false)}>
-          <Col>
-            <Sequence
-              midi={midi}
-              trackIndex={trackIndex}
-              transpose={transpose}
-              lyric={lyric}
-              setLyric={setLyric}
-              xScale={xScale}
-              yScale={yScale}
+
+  if (!loaded) {
+    return ''
+  } else {
+    return (
+      <>
+        <Helmet>
+          <title>{t('title')}</title>
+          <body />
+        </Helmet>
+        <Navbar color="light" light className="fixed-top">
+          <div className="d-flex align-items-center mr-auto">
+            <Button type="button" color="secondary" className="mr-3" onClick={handleClickUpload}>
+              {t("changeMidi")}
+            </Button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              id="midi-file-input"
+              className="d-none"
+              accept="audio/midi, audio/x-midi"
+              onChange={handleChangeFile}
             />
-          </Col>
-        </Row>
-        <Row>
-          <div className="sequence-controls">
-            <div className="d-flex align-items-start p-3">
-              <LyricEdit
+            <span className="mr-2">{t("track")}</span>
+            <Input
+              type="select"
+              color="light"
+              onChange={handleChangeTrack}
+              style={{width: '120px'}}
+              className="mr-3"
+            >
+              {midi && midi.toJSON().tracks.map((v,i) => <option key={i} value={i}>{i+1}: {v.name}</option>)}
+            </Input>
+            <span className="mr-2">{t("bpm")}</span>
+            <Input
+              type="number"
+              color="light"
+              value={tempo}
+              onChange={handleChangeTempo}
+              style={{width: '70px'}}
+              className="mr-3"
+            />
+            <span className="mr-2">{t("transpose")}</span>
+            <Input
+              type="number"
+              min="-24"
+              max="24"
+              value={transpose}
+              style={{width: '70px'}}
+              onChange={handleChangeTranspose}
+            />
+          </div>
+          <Button color="primary" onClick={handleGenerateMusicXML}>
+            {t("download")}
+          </Button>
+        </Navbar>
+        <Container fluid className="px-0" style={{marginTop: '56px'}}>
+          <Row className="no-gutters" onClick={() => setExpandLyric(false)}>
+            <Col>
+              <Sequence
+                midi={midi}
+                trackIndex={trackIndex}
+                transpose={transpose}
                 lyric={lyric}
                 setLyric={setLyric}
-                expand={expandLyric}
-                setExpand={setExpandLyric}
-                limit={midi ? midi.tracks[trackIndex].notes.length : 0}
+                xScale={xScale}
+                yScale={yScale}
               />
-              <Input
-                type="range"
-                className="sequence-scale-range"
-                max="0.5"
-                min="0.025"
-                step="0.025"
-                value={xScale}
-                onChange={handleChangeXScale}
-              />
+            </Col>
+          </Row>
+          <Row>
+            <div className="sequence-controls">
+              <div className="d-flex align-items-start p-3">
+                <LyricEdit
+                  lyric={lyric}
+                  setLyric={setLyric}
+                  expand={expandLyric}
+                  setExpand={setExpandLyric}
+                  limit={midi ? midi.tracks[trackIndex].notes.length : 0}
+                />
+                <Input
+                  type="range"
+                  className="sequence-scale-range"
+                  max="0.5"
+                  min="0.025"
+                  step="0.025"
+                  value={xScale}
+                  onChange={handleChangeXScale}
+                />
+              </div>
             </div>
-          </div>
-        </Row>
-      </Container>
-      <HelpModal
-        show={showHelp}
-        handleStart={() => {
-          setShowHelp(false);
-          fileInputRef.current.click();
-        }}
-      />
-    </>
-  )
+          </Row>
+        </Container>
+        <HelpModal
+          show={showHelp}
+          handleStart={() => {
+            setShowHelp(false);
+            fileInputRef.current.click();
+          }}
+        />
+      </>
+    )
+  }
 }
 
 export default MidiEditPage;

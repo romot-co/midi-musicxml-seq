@@ -10,6 +10,7 @@
     "@tonejs/midi": "^2.0.15",
     "bootstrap": "^4.4.1",
     "jaco": "^4.0.0",
+    "lisan": "^0.1.1",
     "node-sass": "^4.13.1",
     "react": "^16.13.0",
     "react-dom": "^16.13.0",
@@ -21,11 +22,12 @@
     "xml-js": "^1.6.11"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "lisan:compile": "lisan compile",
+    "start": "yarn run lisan:compile -w & yarn run react-scripts start",
+    "build": "yarn run lisan:compile & yarn run react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "predeploy": "npm run build",
+    "predeploy": "yarn run build",
     "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
@@ -47,6 +49,7 @@
     "cross-env": "^7.0.2",
     "eslint": "^6.8.0",
     "gh-pages": "^2.2.0",
+    "lisan-cli": "^0.1.1",
     "prettier": "^1.19.1"
   }
 }
