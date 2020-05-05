@@ -20,6 +20,7 @@ module.exports = {
     "helpModal.note": ["Note"],
     "helpModal.note1": ["Currently, only single notes supported (unsupported note overlaps and chords)"],
     "helpModal.note2": ["Currently, can not add / change / delete MIDI notes"],
+    "inputLyrics": ["Input as Romaji"],
     "japanese": ["Japanese Hiragana"],
     "lyrics": ["Lyrics"],
     "message.failedToLoadFile": ["Failed to load file"],

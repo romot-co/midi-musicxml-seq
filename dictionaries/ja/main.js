@@ -21,6 +21,7 @@ module.exports = {
     "helpModal.note1": ["単音のみの対応です(ノートの重なりや和音は未考慮)"],
     "helpModal.note2": ["MIDIノートの追加・変更・削除はできません"],
     "helpModal.start": ["MIDIファイルをアップロードしてはじめる"],
+    "inputLyrics": ["ひらがなで入力"],
     "japanese": ["日本語 ひらがな"],
     "lyrics": ["歌詞入力"],
     "message.failedToLoadFile": ["ファイルが読み込みませんでした"],
