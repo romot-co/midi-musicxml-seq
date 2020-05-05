@@ -3,6 +3,7 @@ import { Input } from 'reactstrap';
 import hasSmallLetter from 'jaco/fn/hasSmallLetter';
 import isOnlyHiragana from 'jaco/fn/isOnlyHiragana';
 import { toKana, toRomaji } from 'wanakana';
+import { t } from "lisan";
 
 const LyricEdit = props => {
   const { lyric, setLyric, expand, setExpand, limit, locale, disabled } = props;
@@ -58,6 +59,7 @@ const LyricEdit = props => {
       type="textarea"
       className={`lyric-text mr-3 ${expand ? 'lyric-text-expand' : ''}`}
       value={value}
+      placeholder={t('inputLyrics')}
       onClick={() => setExpand(true)}
       onChange={handleChange}
       onBlur={handleBlur}

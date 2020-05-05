@@ -10,6 +10,7 @@
     "pitch": "Pitch",
     "transpose": "Transpose",
     "download": "Convert to MusicXML",
+    "inputLyrics": "Input as Romaji",
     "close": "Close",
     "japanese": "Japanese Hiragana",
     "english": "English Roman (Experimental)",

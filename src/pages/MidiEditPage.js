@@ -17,7 +17,8 @@ import {
   Row,
   TabContent,
   TabPane,
-  Tooltip
+  Tooltip,
+  UncontrolledTooltip,
 } from 'reactstrap';
 import Sequence from 'components/Sequence';
 import LyricEdit from 'components/LyricEdit';
@@ -477,6 +478,14 @@ const MidiEditPage = (props) => {
                         locale={locale}
                         disabled={!midi}
                       />
+                      { start &&
+                        <UncontrolledTooltip
+                          target="lyricEditInput"
+                          fade
+                        >
+                          {t('inputLyrics')}
+                        </UncontrolledTooltip>
+                      }
                     </TabPane>
                   </TabContent>
                 </div>
