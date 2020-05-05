@@ -61,7 +61,7 @@ const MidiEditPage = (props) => {
         setOpenTooltipUpload(true);
       }
     }
-  }, [loaded]);
+  }, [loaded, start]);
   const updateLanguage = (lang) => {
     lisan.setLocaleName(lang);
     import(`../../public/dictionaries/${lang}/main`).then((dict) => {
