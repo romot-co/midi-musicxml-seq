@@ -8,6 +8,8 @@
 - Can select MIDI track / change BPM / transpose
 - Made by React
 
+**Try it online here(https://romot-co.github.io/midi-musicxml-seq/)**
+
 ## Available Scripts
 
 In the project directory, you can run:
