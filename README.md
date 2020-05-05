@@ -1,4 +1,12 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## TL;DR
+
+![screenshot-romot-co github io-2020 05](https://user-images.githubusercontent.com/9082140/81095355-da83be00-8f3f-11ea-8eba-d4f66d262c3b.png)
+
+- Import your MIDI, edit lyrics and convert to MusicXML(for NEUTRINO VocalSynthesizer) by ease of use GUI
+- Can enter lyrics in bulk or for each note in Japanese or English(Roman)
+- Similar to a DAW sequencer UI and can use the X-axis scale
+- Can select MIDI track / change BPM / transpose
+- Made by React
 
 ## Available Scripts
 
