@@ -6,7 +6,14 @@
     "track": "トラック",
     "bpm": "BPM",
     "transpose": "キー",
-    "download": "ダウンロード",
+    "lyrics": "歌詞入力",
+    "velocity": "ベロシティ",
+    "download": "MusicXMLにする",
+    "close": "閉じる",
+    "japanese": "日本語",
+    "english": "英語",
+    "about": "このアプリについて",
+    "startHere": "MIDIファイルと歌詞を編集しMusicXMLに変換",
     "message.noTracks": "トラックがありません",
     "message.failedToLoadFile": "ファイルが読み込みませんでした",
     "helpModal.about": "概要",
@@ -16,8 +23,10 @@
     "helpModal.note": "ノート",
     "helpModal.note1": "単音のみの対応です(ノートの重なりや和音は未考慮)",
     "helpModal.note2": "MIDIノートの追加・変更・削除はできません",
-    "helpModal.misc": "Misc",
+    "helpModal.misc": "謝辞など",
     "helpModal.misc1": "連絡先: ${link}",
+    "helpModal.misc2": "スペシャルサンクス(MusicXML仕様): ${link}",
+    "helpModal.misc3": "NEUTRINOを使った自作曲: ${link}",
     "helpModal.start": "MIDIファイルをアップロードしてはじめる"
   }
 }

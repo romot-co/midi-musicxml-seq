@@ -4,7 +4,7 @@ import hasSmallLetter from 'jaco/fn/hasSmallLetter';
 import isOnlyHiragana from 'jaco/fn/isOnlyHiragana';
 
 const LyricEdit = props => {
-  const { lyric, setLyric, expand, setExpand, limit } = props;
+  const { lyric, setLyric, expand, setExpand, limit, disabled } = props;
   const [value, setValue] = useState('');
   const handleChangeLyric = (str) => {
     const trimed = str.replace(/\s/g, '').trim();
@@ -47,6 +47,8 @@ const LyricEdit = props => {
       onChange={handleChange}
       onBlur={handleBlur}
       onCompositionEnd={handleCompositionEnd}
+      id="lyricEditInput"
+      disabled={disabled}
     />
   );
 };

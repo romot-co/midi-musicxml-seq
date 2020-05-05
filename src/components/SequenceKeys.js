@@ -1,4 +1,5 @@
 import React from 'react';
+import { UncontrolledTooltip } from 'reactstrap';
 
 const SequenceKeys = props => {
   const { keys, octave } = props;
@@ -24,13 +25,11 @@ const SequenceKeys = props => {
           <div className={`sequence-key sequence-key-${v.midi} sequence-key-${v.color} sequence-key-${v.pitch}`} id={`sequence-key-${v.midi}`}>
             <span className="sequence-key-base">{mapPitch[v.pitch]}{octave + 1}</span>
           </div>
-          {/*
           <UncontrolledTooltip
             target={`sequence-key-${v.midi}`} placement="right"
           >
             {mapPitch[v.pitch]}{octave}
           </UncontrolledTooltip>
-          */}
         </React.Fragment>
       ))}
     </div>

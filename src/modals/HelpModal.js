@@ -4,7 +4,7 @@ import { t } from "lisan";
 
 const HelpModal = props => {
   const {
-    handleStart,
+    handleClose,
     show,
   } = props;
   return (
@@ -30,22 +30,22 @@ const HelpModal = props => {
                 {t('helpModal.misc1', {link: <a href="https://twitter.com/romotco" key="contact" target="_blank" rel="noopener noreferrer">@romotco</a>})}
               </li>
               <li>
-                <a href="https://twitter.com/tnantoka" target="_blank" rel="noopener noreferrer">@tnantoka</a>さまの<a href="https://neutrino.tnantoka.com/">NEUTRINOのブログ</a>を大きく参考にさせていただいております。<br />ありがとうございます。
+                {t('helpModal.misc2', {link: <a href="https://twitter.com/tnantoka" key="specialThanks" target="_blank" rel="noopener noreferrer">@tnantoka</a>})}
+                {' '}<a href="https://neutrino.tnantoka.com/" target="_blank" rel="noopener noreferrer">NEUTRINO BLOG</a>
               </li>
               <li>
-                AIきりたん(NEUTRINO)で<a href="https://www.nicovideo.jp/watch/sm36446234" target="_blank" rel="noopener noreferrer">オリジナル曲</a>つくっているのでよければどうぞ。
-                <script type="application/javascript" src="https://embed.nicovideo.jp/watch/sm36446234/script?w=640&h=360&from=74"></script><noscript><a href="https://www.nicovideo.jp/watch/sm36446234?from=74">AIきりたん - Neu Breath 【NEUTRINOオリジナル】</a></noscript>
+                {t('helpModal.misc3', {link: <a href="https://www.nicovideo.jp/watch/sm36446234" key="mySong" target="_blank" rel="noopener noreferrer">AI Kiritan - Neu Breath (NEUTRINO Original)</a>})}
               </li>
             </ul>
             <h2 className="h6 font-weight-bold">MusicXML</h2>
             <ul>
-              <li><a href="http://usermanuals.musicxml.com/MusicXML/MusicXML.htm#license.htm%3FTocPath%3D_____7">MusicXML3.0 Public License</a></li>
+              <li><a href="http://usermanuals.musicxml.com/MusicXML/MusicXML.htm#license.htm%3FTocPath%3D_____7" rel="noopener noreferrer">MusicXML3.0 Public License</a></li>
             </ul>
           </Col>
         </Row>
       </ModalBody>
       <ModalFooter>
-        <Button color="primary" onClick={handleStart}>{t('helpModal.start')}</Button>
+        <Button color="primary" onClick={handleClose}>{t('close')}</Button>
       </ModalFooter>
     </Modal>
   )

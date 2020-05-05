@@ -20,4 +20,18 @@
   }
 }
 
+.btn.btn-primary:disabled {
+  background: $gray-600;
+  border-color: $gray-600;
+}
+
+.navbar-text {
+  color: $gray-600;
+  font-size: $font-size-sm;
+}
+
+.nav-pills .nav-link, .nav-pills .show > .nav-link {
+  font-size: $small-font-size;
+}
+
 // Temporaries

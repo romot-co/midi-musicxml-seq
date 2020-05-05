@@ -1,14 +1,31 @@
 import React, { useState, useRef, useEffect } from 'react';
 //import { useHistory, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
-import { Button, Col, Container, Input, Navbar, Row } from 'reactstrap';
+import {
+  Button,
+  Col,
+  Container,
+  UncontrolledDropdown,
+  DropdownMenu,
+  DropdownToggle,
+  DropdownItem,
+  Input,
+  Nav,
+  NavItem,
+  NavLink,
+  Navbar,
+  Row,
+  TabContent,
+  TabPane,
+  Tooltip
+} from 'reactstrap';
 import Sequence from 'components/Sequence';
 import LyricEdit from 'components/LyricEdit';
 import HelpModal from 'modals/HelpModal';
 import { Midi } from '@tonejs/midi';
 import { midiNumberToPitchMusicXML } from 'utils/convert';
 import { lisan, t } from "lisan";
-// import { FiPlusCircle } from "react-icons/fi";
+import { FiMoreVertical } from "react-icons/fi";
 import xmljs from 'xml-js';
 
 const MidiEditPage = (props) => {
@@ -17,6 +34,7 @@ const MidiEditPage = (props) => {
   const [loaded, setLoaded] = useState(false);
   const [language, setLanguage] = useState((window.navigator.language === "ja" || window.navigator.language === "ja-JP") ? 'ja' : 'en');
   const fileInputRef = useRef(null);
+  const uploadRef = useRef(null);
   const [midi, setMidi] = useState(false);
   const [trackIndex, setTrackIndex] = useState(0);
   const [tempo, setTempo] = useState(120);
@@ -25,22 +43,35 @@ const MidiEditPage = (props) => {
   const [yScale, setYScale] = useState(24); // temporary
   const [xScale, setXScale] = useState(0.25);
   const [lyric, setLyric] = useState(['']);
+  const [tab, setTab] = useState('lyrics');
+  const [start, setStart] = useState(false);
+  const [openTooltipUpload, setOpenTooltipUpload] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
   useEffect(() => {
     updateLanguage(language);
   }, [language]);
+  useEffect(() => {
+    if (loaded) {
+      const target = document.querySelector('#sequence-key-72');
+      if (target !== null) {
+        target.scrollIntoView();
+      }
+      if (!start) {
+        setStart(true);
+        setOpenTooltipUpload(true);
+      }
+    }
+  }, [loaded]);
   const updateLanguage = (lang) => {
     lisan.setLocaleName(lang);
-
     import(`../../public/dictionaries/${lang}/main`).then((dict) => {
       lisan.add(dict);
       setLoaded(true);
       setLanguage(lang);
-      setShowHelp(true);
-      document.querySelector('#sequence-key-70').scrollIntoView();
     });
   };
   const handleClickUpload = () => {
+    setOpenTooltipUpload(false);
     fileInputRef.current.click();
   };
   const handleChangeFile = (e) => {
@@ -60,7 +91,9 @@ const MidiEditPage = (props) => {
           setTempo(tempo);
           setLyric(midi.tracks[trackIndex].notes.map(() => 'ら'));
           setYScale(24); //temporary
-          document.querySelector('#sequence-key-70').scrollIntoView();
+          document.querySelector('#sequence-key-72').scrollIntoView();
+          setExpandLyric(true);
+          document.querySelector('#lyricEditInput').focus();
         }
       }
     };
@@ -294,9 +327,26 @@ const MidiEditPage = (props) => {
         </Helmet>
         <Navbar color="light" light className="fixed-top">
           <div className="d-flex align-items-center mr-auto">
-            <Button type="button" color="secondary" className="mr-3" onClick={handleClickUpload}>
+            <Button
+              type="button"
+              color={!midi ? 'primary' : 'secondary'}
+              className="mr-3"
+              onClick={handleClickUpload}
+              id="upload"
+              ref={uploadRef}
+            >
               {t("changeMidi")}
             </Button>
+            { start &&
+              <Tooltip
+                target="upload"
+                isOpen={openTooltipUpload}
+                delay={4000}
+                fade
+              >
+                {t('startHere')}
+              </Tooltip>
+            }
             <input
               ref={fileInputRef}
               type="file"
@@ -305,38 +355,60 @@ const MidiEditPage = (props) => {
               accept="audio/midi, audio/x-midi"
               onChange={handleChangeFile}
             />
-            <span className="mr-2">{t("track")}</span>
+            <span className="navbar-text mr-2">{t("track")}</span>
             <Input
               type="select"
               color="light"
+              size="sm"
               onChange={handleChangeTrack}
               style={{width: '120px'}}
               className="mr-3"
+              disabled={!midi}
             >
               {midi && midi.toJSON().tracks.map((v,i) => <option key={i} value={i}>{i+1}: {v.name}</option>)}
             </Input>
-            <span className="mr-2">{t("bpm")}</span>
+            <span className="navbar-text mr-2">{t("bpm")}</span>
             <Input
               type="number"
               color="light"
+              size="sm"
               value={tempo}
               onChange={handleChangeTempo}
               style={{width: '70px'}}
               className="mr-3"
+              disabled={!midi}
             />
-            <span className="mr-2">{t("transpose")}</span>
+            <span className="navbar-text mr-2">{t("transpose")}</span>
             <Input
               type="number"
               min="-24"
               max="24"
+              size="sm"
               value={transpose}
               style={{width: '70px'}}
               onChange={handleChangeTranspose}
+              disabled={!midi}
             />
           </div>
-          <Button color="primary" onClick={handleGenerateMusicXML}>
+          <Button
+            color="primary"
+            onClick={handleGenerateMusicXML}
+            className="mr-1"
+            disabled={!midi}
+          >
             {t("download")}
           </Button>
+          <UncontrolledDropdown>
+            <DropdownToggle color="light">
+              <FiMoreVertical />
+            </DropdownToggle>
+            <DropdownMenu>
+              <DropdownItem onClick={() => updateLanguage('en')}>{t('english')}</DropdownItem>
+              <DropdownItem onClick={() => updateLanguage('ja')}>{t('japanese')}</DropdownItem>
+              <DropdownItem divider />
+              <DropdownItem onClick={() => setShowHelp(true)}>{t('about')}</DropdownItem>
+            </DropdownMenu>
+          </UncontrolledDropdown>
         </Navbar>
         <Container fluid className="px-0" style={{marginTop: '56px'}}>
           <Row className="no-gutters" onClick={() => setExpandLyric(false)}>
@@ -354,32 +426,61 @@ const MidiEditPage = (props) => {
           </Row>
           <Row>
             <div className="sequence-controls">
-              <div className="d-flex align-items-start p-3">
-                <LyricEdit
-                  lyric={lyric}
-                  setLyric={setLyric}
-                  expand={expandLyric}
-                  setExpand={setExpandLyric}
-                  limit={midi ? midi.tracks[trackIndex].notes.length : 0}
-                />
-                <Input
-                  type="range"
-                  className="sequence-scale-range"
-                  max="0.5"
-                  min="0.025"
-                  step="0.025"
-                  value={xScale}
-                  onChange={handleChangeXScale}
-                />
+              <div className="d-flex align-items-start">
+                <div className="w-100 p-2">
+                  <Nav pills className="mb-2">
+                    <NavItem>
+                      <NavLink
+                        href="#"
+                        onClick={() => { setTab('lyrics') }}
+                        active={tab === 'lyrics'}
+                      >
+                        {t('lyrics')}
+                      </NavLink>
+                    </NavItem>
+                    <NavItem>
+                      <NavLink
+                        href="#"
+                        onClick={() => { setTab('velocity') }}
+                        active={tab === 'velocity'}
+                        disabled
+                      >
+                        {t('velocity')}
+                      </NavLink>
+                    </NavItem>
+                  </Nav>
+                  <TabContent activeTab={tab}>
+                    <TabPane tabId="lyrics">
+                      <LyricEdit
+                        lyric={lyric}
+                        setLyric={setLyric}
+                        expand={expandLyric}
+                        setExpand={setExpandLyric}
+                        limit={midi ? midi.tracks[trackIndex].notes.length : 0}
+                        disabled={!midi}
+                      />
+                    </TabPane>
+                  </TabContent>
+                </div>
+                <div className="px-3">
+                  <Input
+                    type="range"
+                    className="sequence-scale-range"
+                    max="0.5"
+                    min="0.025"
+                    step="0.025"
+                    value={xScale}
+                    onChange={handleChangeXScale}
+                  />
+                </div>
               </div>
             </div>
           </Row>
         </Container>
         <HelpModal
           show={showHelp}
-          handleStart={() => {
+          handleClose={() => {
             setShowHelp(false);
-            fileInputRef.current.click();
           }}
         />
       </>

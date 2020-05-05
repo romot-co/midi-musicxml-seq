@@ -22,7 +22,7 @@ $scales-width: 70px;
 .sequence-key {
   align-items: center;
   box-sizing: border-box;
-  color: $text-muted;
+  color: transparent;
   display: flex;
   font-size: 11px;
   height: 1.5rem;
@@ -42,7 +42,6 @@ $scales-width: 70px;
 
   &.sequence-key-black {
     background: $gray-600;
-    color: $gray-200;
 
     &:before {
       background: $white;
@@ -64,6 +63,10 @@ $scales-width: 70px;
       width: 1rem;
       top: 0.75rem;
     }
+  }
+
+  &.sequence-key-0 {
+    color: $text-muted;
   }
 }
 
