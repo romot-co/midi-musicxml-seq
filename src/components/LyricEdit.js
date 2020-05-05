@@ -2,23 +2,38 @@ import React, { useState, useEffect } from 'react';
 import { Input } from 'reactstrap';
 import hasSmallLetter from 'jaco/fn/hasSmallLetter';
 import isOnlyHiragana from 'jaco/fn/isOnlyHiragana';
+import { toKana, toRomaji } from 'wanakana';
 
 const LyricEdit = props => {
-  const { lyric, setLyric, expand, setExpand, limit, disabled } = props;
+  const { lyric, setLyric, expand, setExpand, limit, locale, disabled } = props;
   const [value, setValue] = useState('');
   const handleChangeLyric = (str) => {
     const trimed = str.replace(/\s/g, '').trim();
     let nextLyric = [];
-    trimed.split('').forEach((current,i,origin) => {
-      const next = origin[i+1] || false;
-      if (!isOnlyHiragana(current)) { return; }
-      if (hasSmallLetter(current)) { return; }
-      if (next && hasSmallLetter(next)) {
-        nextLyric.push(current + next);
-      } else {
-        nextLyric.push(current);
-      }
-    });
+    if (locale === 'ja') {
+      trimed.split('').forEach((current,i,origin) => {
+        const next = origin[i+1] || false;
+        if (!isOnlyHiragana(current)) { return; }
+        if (hasSmallLetter(current)) { return; }
+        if (next && hasSmallLetter(next)) {
+          nextLyric.push(current + next);
+        } else {
+          nextLyric.push(current);
+        }
+      });
+    }
+    if (locale === 'en') {
+      toKana(trimed).split('').forEach((current,i,origin) => {
+        const next = origin[i+1] || false;
+        if (!isOnlyHiragana(current)) { return; }
+        if (hasSmallLetter(current)) { return; }
+        if (next && hasSmallLetter(next)) {
+          nextLyric.push(toRomaji(current + next));
+        } else {
+          nextLyric.push(toRomaji(current));
+        }
+      });
+    }
     setLyric(nextLyric.slice(0,limit));
   };
 

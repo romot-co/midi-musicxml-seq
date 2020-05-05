@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import hasSmallLetter from 'jaco/fn/hasSmallLetter';
+import { isRomaji } from 'wanakana';
 import { UncontrolledTooltip } from 'reactstrap';
 
 const Note = props => {
-  const { note, xScale, yScale, transpose, phoneme, lyric, index, edit, setEdit, onChange } = props;
+  const { note, xScale, yScale, transpose, phoneme, lyric, index, edit, setEdit, locale, onChange } = props;
   const inputEl = useRef(null);
   const [value, setValue] = useState('');
   const styles = {
@@ -27,13 +28,24 @@ const Note = props => {
 
   const handleChange = (e) => {
     setValue(e.target.value);
-    if (!e.target.value) {
-      return;
-    } else if (e.target.value.length === 1) {
-      onChange(e.target.value[0], index);
-    } else if (hasSmallLetter(e.target.value)) {
-      onChange(e.target.value, index);
-    };
+    if (locale === 'ja') {
+      if (!e.target.value) {
+        onChange(' ', index);
+      } else if (e.target.value.length === 1) {
+        onChange(e.target.value[0], index);
+      } else if (hasSmallLetter(e.target.value)) {
+        onChange(e.target.value, index);
+      };
+    }
+    if (locale === 'en') {
+      if (!e.target.value) {
+        onChange(' ', index);
+      } else if (e.target.value.length === 1) {
+        onChange(e.target.value[0], index);
+      } else if (isRomaji(e.target.value)) {
+        onChange(e.target.value, index);
+      };
+    }
   };
 
   useEffect(() => {
@@ -56,7 +68,7 @@ const Note = props => {
         onKeyPress={handleKeyPress}
         onChange={handleChange}
         className="note-input"
-        maxLength="3"
+        maxLength={locale === 'ja' ? 2 : 3}
         ref={inputEl}
         id={`note-${index}`}
       />

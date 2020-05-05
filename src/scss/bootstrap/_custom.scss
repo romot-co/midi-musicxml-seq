@@ -240,9 +240,9 @@ $line-height-sm:              1.5 !default;
 $border-width:                1px !default;
 $border-color:                $gray-300 !default;
 
-$border-radius:               .125rem;
+$border-radius:               .175rem;
 $border-radius-lg:            .5rem;
-$border-radius-sm:            .125rem;
+$border-radius-sm:            .175rem;
 
 $rounded-pill:                50rem !default;
 
@@ -284,13 +284,13 @@ $font-family-monospace:       SFMono-Regular, Menlo, Monaco, Consolas, "Liberati
 $font-family-base:            $font-family-sans-serif;
 // stylelint-enable value-keyword-case
 
-$font-size-base:              .875rem;
+$font-size-base:              .9375rem;
 $font-size-lg:                $font-size-base * 1.25 !default;
 $font-size-sm:                .8125rem;
 
 $font-weight-lighter:         lighter;
 $font-weight-light:           300;
-$font-weight-normal:          400;
+$font-weight-normal:          500;
 $font-weight-bold:            700;
 $font-weight-bolder:          bolder;
 
@@ -760,15 +760,15 @@ $navbar-dark-brand-hover-color:           $navbar-dark-active-color !default;
 //
 // Dropdown menu container and contents.
 
-$dropdown-min-width:                10rem !default;
-$dropdown-padding-y:                .5rem !default;
-$dropdown-spacer:                   .125rem !default;
-$dropdown-font-size:                $font-size-base !default;
-$dropdown-color:                    $body-color !default;
-$dropdown-bg:                       $white !default;
-$dropdown-border-color:             rgba($black, .15) !default;
-$dropdown-border-radius:            $border-radius !default;
-$dropdown-border-width:             $border-width !default;
+$dropdown-min-width:                12rem;
+$dropdown-padding-y:                .5rem;
+$dropdown-spacer:                   .125rem;
+$dropdown-font-size:                $font-size-base;
+$dropdown-color:                    $body-color;
+$dropdown-bg:                       $white;
+$dropdown-border-color:             #f0f0f0;
+$dropdown-border-radius:            $border-radius;
+$dropdown-border-width:             $border-width;
 $dropdown-inner-border-radius:      subtract($dropdown-border-radius, $dropdown-border-width) !default;
 $dropdown-divider-bg:               $gray-200 !default;
 $dropdown-divider-margin-y:         $nav-divider-margin-y !default;

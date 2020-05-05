@@ -3,7 +3,7 @@ import SequenceKeys from 'components/SequenceKeys';
 import Note from 'components/Note';
 
 const Sequence = props => {
-  const { midi, trackIndex = 0, transpose = 0, lyric, setLyric, xScale, yScale } = props;
+  const { midi, trackIndex = 0, transpose = 0, lyric, setLyric, xScale, yScale, locale } = props;
   const pitches = [...Array(128).keys()]
     .reduce((a, c, i) => i % 12 === 0 ? [...a, [c]] : [...a.slice(0, -1), [...a[a.length - 1], c]], [])
     .map((v,oc) => v.map((n,i) => {
@@ -64,6 +64,7 @@ const Sequence = props => {
             setEdit={setEdit}
             index={i}
             lyric={lyric}
+            locale={locale}
             onChange={setPhoneme}
           />
         ))}

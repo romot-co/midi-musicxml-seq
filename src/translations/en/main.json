@@ -2,16 +2,17 @@
   "locale": "en",
   "entries": {
     "title": "Convert MusixXML from MIDI and Lyrics - α",
-    "changeMidi": "Change MIDI",
+    "changeMidi": "Import MIDI",
     "track": "Track",
     "bpm": "BPM",
     "lyrics": "Lyrics",
-    "velocity": "velocity",
+    "velocity": "Velocity",
+    "pitch": "Pitch",
     "transpose": "Transpose",
     "download": "Convert to MusicXML",
     "close": "Close",
-    "japanese": "Japanese",
-    "english": "English",
+    "japanese": "Japanese Hiragana",
+    "english": "English Roman (Experimental)",
     "about": "About",
     "startHere": "Upload your MIDI file to edit lyrics, convert to MusicXML",
     "message.noTracks": "No tracks",
@@ -26,6 +27,6 @@
     "helpModal.misc": "Misc",
     "helpModal.misc1": "Contact: ${link}",
     "helpModal.misc2": "Special thanks to: ${link}",
-    "helpModal.misc3": "My song with NEUTRINO: ${link}",
+    "helpModal.misc3": "My song with NEUTRINO: ${link}"
   }
 }

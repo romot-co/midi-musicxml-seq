@@ -4,19 +4,51 @@
 @import '~bootstrap/scss/mixins';
 @import '~bootstrap/scss/bootstrap';
 
+
+// Basement
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+
 // Override Default Components
 .navbar {
   border-bottom: 1px solid #ddd;
 }
 
-.btn-icon {
-  height: 38px;
-  width: 38px;
+.dropdown-menu {
+  box-shadow: $box-shadow;
+}
+
+.dropdown-item {
+  align-items: center;
+  display: flex;
+
+  &:focus {
+    outline: none;
+  }
+
+  &:active {
+    color: $white;
+  }
+
+  &:disabled {
+    color: $gray-400;
+  }
+}
+
+
+.btn-circle {
+  border-radius: 50%;
+  padding: 0;
+  height: 36px;
+  width: 36px;
 
   svg {
     position: relative;
     top: -1px;
-    left: -2px;
+    left: -1px;
   }
 }
 

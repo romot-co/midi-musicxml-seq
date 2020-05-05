@@ -27,12 +27,13 @@ import { midiNumberToPitchMusicXML } from 'utils/convert';
 import { lisan, t } from "lisan";
 import { FiMoreVertical } from "react-icons/fi";
 import xmljs from 'xml-js';
+import { toKana, toRomaji } from 'wanakana';
 
 const MidiEditPage = (props) => {
   //const history = useHistory();
   //const location = useLocation();
   const [loaded, setLoaded] = useState(false);
-  const [language, setLanguage] = useState((window.navigator.language === "ja" || window.navigator.language === "ja-JP") ? 'ja' : 'en');
+  const [locale, setLocale] = useState((window.navigator.language === "ja" || window.navigator.language === "ja-JP") ? 'ja' : 'en');
   const fileInputRef = useRef(null);
   const uploadRef = useRef(null);
   const [midi, setMidi] = useState(false);
@@ -48,8 +49,8 @@ const MidiEditPage = (props) => {
   const [openTooltipUpload, setOpenTooltipUpload] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
   useEffect(() => {
-    updateLanguage(language);
-  }, [language]);
+    updateLocale(locale);
+  }, [locale]);
   useEffect(() => {
     if (loaded) {
       const target = document.querySelector('#sequence-key-72');
@@ -62,12 +63,17 @@ const MidiEditPage = (props) => {
       }
     }
   }, [loaded, start]);
-  const updateLanguage = (lang) => {
+  const updateLocale = (lang) => {
     lisan.setLocaleName(lang);
     import(`../../public/dictionaries/${lang}/main`).then((dict) => {
       lisan.add(dict);
       setLoaded(true);
-      setLanguage(lang);
+      setLocale(lang);
+      if (lang === 'ja') {
+        setLyric(lyric.map(v => toKana(v)));
+      } else {
+        setLyric(lyric.map(v => toRomaji(v)));
+      }
     });
   };
   const handleClickUpload = () => {
@@ -89,7 +95,7 @@ const MidiEditPage = (props) => {
           setMidi(midi);
           setTrackIndex(0);
           setTempo(tempo);
-          setLyric(midi.tracks[trackIndex].notes.map(() => 'ら'));
+          setLyric(midi.tracks[trackIndex].notes.map(() => locale === 'ja' ? 'ら' : 'ra'));
           setYScale(24); //temporary
           document.querySelector('#sequence-key-72').scrollIntoView();
           setExpandLyric(true);
@@ -128,7 +134,7 @@ const MidiEditPage = (props) => {
         if (max > note.ticks && (min <= note.ticks || min < (note.ticks + note.durationTicks))) {
           return {
             ...note,
-            lyric: lyric[index] || '',
+            lyric: locale === 'ja' ? lyric[index] : toKana(lyric[index]) || '',
           };
         } else {
           return null;
@@ -399,12 +405,12 @@ const MidiEditPage = (props) => {
             {t("download")}
           </Button>
           <UncontrolledDropdown>
-            <DropdownToggle color="light">
+            <DropdownToggle color="light" className="btn btn-circle">
               <FiMoreVertical />
             </DropdownToggle>
             <DropdownMenu>
-              <DropdownItem onClick={() => updateLanguage('en')}>{t('english')}</DropdownItem>
-              <DropdownItem onClick={() => updateLanguage('ja')}>{t('japanese')}</DropdownItem>
+              <DropdownItem onClick={() => updateLocale('en')}>{t('english')}</DropdownItem>
+              <DropdownItem onClick={() => updateLocale('ja')}>{t('japanese')}</DropdownItem>
               <DropdownItem divider />
               <DropdownItem onClick={() => setShowHelp(true)}>{t('about')}</DropdownItem>
             </DropdownMenu>
@@ -421,6 +427,7 @@ const MidiEditPage = (props) => {
                 setLyric={setLyric}
                 xScale={xScale}
                 yScale={yScale}
+                locale={locale}
               />
             </Col>
           </Row>
@@ -448,6 +455,16 @@ const MidiEditPage = (props) => {
                         {t('velocity')}
                       </NavLink>
                     </NavItem>
+                    <NavItem>
+                      <NavLink
+                        href="#"
+                        onClick={() => { setTab('pitch') }}
+                        active={tab === 'pitch'}
+                        disabled
+                      >
+                        {t('pitch')}
+                      </NavLink>
+                    </NavItem>
                   </Nav>
                   <TabContent activeTab={tab}>
                     <TabPane tabId="lyrics">
@@ -457,6 +474,7 @@ const MidiEditPage = (props) => {
                         expand={expandLyric}
                         setExpand={setExpandLyric}
                         limit={midi ? midi.tracks[trackIndex].notes.length : 0}
+                        locale={locale}
                         disabled={!midi}
                       />
                     </TabPane>
