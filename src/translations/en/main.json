@@ -19,7 +19,7 @@
     "message.noTracks": "No tracks",
     "message.failedToLoadFile": "Failed to load file",
     "helpModal.about": "About",
-    "helpModal.about1": "Upload your MIDI, input lyrics, convert to MusicXML for NEUTRINO",
+    "helpModal.about1": "Upload your MIDI and start input lyrics",
     "helpModal.about2": "your MIDI file is not upload anywhere (it works on your PC)",
     "helpModal.about3": "Make for my own use with React+Bootstrap",
     "helpModal.note": "Note",

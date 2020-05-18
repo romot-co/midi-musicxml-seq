@@ -15,7 +15,7 @@
     "japanese": "日本語 ひらがな",
     "english": "英語 ローマ字 (実験中)",
     "about": "このアプリについて",
-    "startHere": "MIDIファイルと歌詞を編集しMusicXMLに変換",
+    "startHere": "MIDIファイルを読み込んで歌詞の入力をはじめる",
     "message.noTracks": "トラックがありません",
     "message.failedToLoadFile": "ファイルが読み込みませんでした",
     "helpModal.about": "概要",
