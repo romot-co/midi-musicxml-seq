@@ -27,7 +27,7 @@ module.exports = {
     "message.failedToLoadFile": ["ファイルが読み込みませんでした"],
     "message.noTracks": ["トラックがありません"],
     "pitch": ["ピッチ"],
-    "startHere": ["MIDIファイルと歌詞を編集しMusicXMLに変換"],
+    "startHere": ["MIDIファイルを読み込んで歌詞の入力をはじめる"],
     "title": ["MIDIに歌詞入力してMusicXMLにするやつ - α版"],
     "track": ["トラック"],
     "transpose": ["キー"],

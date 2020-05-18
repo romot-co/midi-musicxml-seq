@@ -10,7 +10,7 @@ module.exports = {
     "download": ["Convert to MusicXML"],
     "english": ["English Roman (Experimental)"],
     "helpModal.about": ["About"],
-    "helpModal.about1": ["Upload your MIDI, input lyrics, convert to MusicXML for NEUTRINO"],
+    "helpModal.about1": ["Upload your MIDI and start input lyrics"],
     "helpModal.about2": ["your MIDI file is not upload anywhere (it works on your PC)"],
     "helpModal.about3": ["Make for my own use with React+Bootstrap"],
     "helpModal.misc": ["Misc"],
