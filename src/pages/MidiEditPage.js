@@ -63,7 +63,7 @@ const MidiEditPage = (props) => {
   };
   useEffect(() => {
     if (locale) updateLocale(locale);
-  }, [locale]);
+  }, [locale]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (loaded) {
       const target = document.querySelector('#sequence-key-72');
