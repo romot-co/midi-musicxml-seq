@@ -26,7 +26,6 @@ import HelpModal from 'modals/HelpModal';
 import { Midi } from '@tonejs/midi';
 import { midiNumberToPitchMusicXML } from 'utils/convert';
 import { lisan, t } from "lisan";
-import { FiMoreVertical } from "react-icons/fi";
 import xmljs from 'xml-js';
 import { toKana, toRomaji } from 'wanakana';
 
@@ -49,21 +48,6 @@ const MidiEditPage = (props) => {
   const [start, setStart] = useState(false);
   const [openTooltipUpload, setOpenTooltipUpload] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
-  useEffect(() => {
-    updateLocale(locale);
-  }, [locale]);
-  useEffect(() => {
-    if (loaded) {
-      const target = document.querySelector('#sequence-key-72');
-      if (target !== null) {
-        target.scrollIntoView();
-      }
-      if (!start) {
-        setStart(true);
-        setOpenTooltipUpload(true);
-      }
-    }
-  }, [loaded, start]);
   const updateLocale = (lang) => {
     lisan.setLocaleName(lang);
     import(`../../public/dictionaries/${lang}/main`).then((dict) => {
@@ -77,6 +61,21 @@ const MidiEditPage = (props) => {
       }
     });
   };
+  useEffect(() => {
+    if (locale) updateLocale(locale);
+  }, [locale]);
+  useEffect(() => {
+    if (loaded) {
+      const target = document.querySelector('#sequence-key-72');
+      if (target !== null) {
+        target.scrollIntoView();
+      }
+      if (!start) {
+        setStart(true);
+        setOpenTooltipUpload(true);
+      }
+    }
+  }, [loaded, start]);
   const handleClickUpload = () => {
     setOpenTooltipUpload(false);
     fileInputRef.current.click();
@@ -337,12 +336,12 @@ const MidiEditPage = (props) => {
             <Button
               type="button"
               color={!midi ? 'primary' : 'secondary'}
-              className="mr-3"
+              className="btn-circle mr-3"
               onClick={handleClickUpload}
               id="upload"
               ref={uploadRef}
             >
-              {t("changeMidi")}
+              <i className="icon ri-folder-open-line" />
             </Button>
             { start &&
               <Tooltip
@@ -404,10 +403,11 @@ const MidiEditPage = (props) => {
             disabled={!midi}
           >
             {t("download")}
+            <i className="ml-2 icon ri-download-2-line" />
           </Button>
           <UncontrolledDropdown>
             <DropdownToggle color="light" className="btn btn-circle">
-              <FiMoreVertical />
+              <i className="icon ri-more-2-fill" />
             </DropdownToggle>
             <DropdownMenu>
               <DropdownItem onClick={() => updateLocale('en')}>{t('english')}</DropdownItem>
@@ -417,7 +417,7 @@ const MidiEditPage = (props) => {
             </DropdownMenu>
           </UncontrolledDropdown>
         </Navbar>
-        <Container fluid className="px-0" style={{marginTop: '56px'}}>
+        <Container fluid className="px-0" style={{marginTop: '53px'}}>
           <Row className="no-gutters" onClick={() => setExpandLyric(false)}>
             <Col>
               <Sequence

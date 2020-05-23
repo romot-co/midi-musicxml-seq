@@ -15,10 +15,10 @@
     "react": "^16.13.0",
     "react-dom": "^16.13.0",
     "react-helmet": "^5.2.1",
-    "react-icons": "^3.9.0",
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.4.0",
     "reactstrap": "^8.4.1",
+    "remixicon": "^2.5.0",
     "wanakana": "^4.0.2",
     "xml-js": "^1.6.11"
   },
