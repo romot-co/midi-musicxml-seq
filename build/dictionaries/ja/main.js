@@ -7,7 +7,7 @@ module.exports = {
     "bpm": ["BPM"],
     "changeMidi": ["MIDIを開く"],
     "close": ["閉じる"],
-    "download": ["MusicXMLにする"],
+    "download": ["MusicXML"],
     "english": ["英語 ローマ字 (実験中)"],
     "helpModal.about": ["概要"],
     "helpModal.about1": ["MIDIに歌詞入力してNEUTRINOで使えるMusicXMLにします"],

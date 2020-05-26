@@ -1,26 +1,30 @@
 {
   "files": {
-    "main.css": "/midi-musicxml-seq/static/css/main.35ece254.chunk.css",
-    "main.js": "/midi-musicxml-seq/static/js/main.c7eb13ec.chunk.js",
-    "main.js.map": "/midi-musicxml-seq/static/js/main.c7eb13ec.chunk.js.map",
-    "runtime-main.js": "/midi-musicxml-seq/static/js/runtime-main.fc3556f7.js",
-    "runtime-main.js.map": "/midi-musicxml-seq/static/js/runtime-main.fc3556f7.js.map",
-    "static/js/2.b45fec8f.chunk.js": "/midi-musicxml-seq/static/js/2.b45fec8f.chunk.js",
-    "static/js/2.b45fec8f.chunk.js.map": "/midi-musicxml-seq/static/js/2.b45fec8f.chunk.js.map",
-    "static/js/3.71e6f98f.chunk.js": "/midi-musicxml-seq/static/js/3.71e6f98f.chunk.js",
-    "static/js/3.71e6f98f.chunk.js.map": "/midi-musicxml-seq/static/js/3.71e6f98f.chunk.js.map",
-    "static/js/4.55415b13.chunk.js": "/midi-musicxml-seq/static/js/4.55415b13.chunk.js",
-    "static/js/4.55415b13.chunk.js.map": "/midi-musicxml-seq/static/js/4.55415b13.chunk.js.map",
+    "main.css": "/midi-musicxml-seq/static/css/main.cd0b76a4.chunk.css",
+    "main.js": "/midi-musicxml-seq/static/js/main.5c964cb8.chunk.js",
+    "main.js.map": "/midi-musicxml-seq/static/js/main.5c964cb8.chunk.js.map",
+    "runtime-main.js": "/midi-musicxml-seq/static/js/runtime-main.78693ec6.js",
+    "runtime-main.js.map": "/midi-musicxml-seq/static/js/runtime-main.78693ec6.js.map",
+    "static/css/2.8797c507.chunk.css": "/midi-musicxml-seq/static/css/2.8797c507.chunk.css",
+    "static/js/2.b706c5d2.chunk.js": "/midi-musicxml-seq/static/js/2.b706c5d2.chunk.js",
+    "static/js/2.b706c5d2.chunk.js.map": "/midi-musicxml-seq/static/js/2.b706c5d2.chunk.js.map",
+    "static/js/3.c51e0af1.chunk.js": "/midi-musicxml-seq/static/js/3.c51e0af1.chunk.js",
+    "static/js/3.c51e0af1.chunk.js.map": "/midi-musicxml-seq/static/js/3.c51e0af1.chunk.js.map",
+    "static/js/4.4e53b7d8.chunk.js": "/midi-musicxml-seq/static/js/4.4e53b7d8.chunk.js",
+    "static/js/4.4e53b7d8.chunk.js.map": "/midi-musicxml-seq/static/js/4.4e53b7d8.chunk.js.map",
     "index.html": "/midi-musicxml-seq/index.html",
-    "precache-manifest.3ad5604264ce86b1d7d989f0168537ca.js": "/midi-musicxml-seq/precache-manifest.3ad5604264ce86b1d7d989f0168537ca.js",
+    "precache-manifest.76e4336f1aa02e76ec12d34e052e586a.js": "/midi-musicxml-seq/precache-manifest.76e4336f1aa02e76ec12d34e052e586a.js",
     "service-worker.js": "/midi-musicxml-seq/service-worker.js",
-    "static/css/main.35ece254.chunk.css.map": "/midi-musicxml-seq/static/css/main.35ece254.chunk.css.map",
-    "static/js/2.b45fec8f.chunk.js.LICENSE.txt": "/midi-musicxml-seq/static/js/2.b45fec8f.chunk.js.LICENSE.txt"
+    "static/css/2.8797c507.chunk.css.map": "/midi-musicxml-seq/static/css/2.8797c507.chunk.css.map",
+    "static/css/main.cd0b76a4.chunk.css.map": "/midi-musicxml-seq/static/css/main.cd0b76a4.chunk.css.map",
+    "static/js/2.b706c5d2.chunk.js.LICENSE.txt": "/midi-musicxml-seq/static/js/2.b706c5d2.chunk.js.LICENSE.txt",
+    "static/media/remixicon.css": "/midi-musicxml-seq/static/media/remixicon.9915fef9.woff2"
   },
   "entrypoints": [
-    "static/js/runtime-main.fc3556f7.js",
-    "static/js/2.b45fec8f.chunk.js",
-    "static/css/main.35ece254.chunk.css",
-    "static/js/main.c7eb13ec.chunk.js"
+    "static/js/runtime-main.78693ec6.js",
+    "static/css/2.8797c507.chunk.css",
+    "static/js/2.b706c5d2.chunk.js",
+    "static/css/main.cd0b76a4.chunk.css",
+    "static/js/main.5c964cb8.chunk.js"
   ]
 }
