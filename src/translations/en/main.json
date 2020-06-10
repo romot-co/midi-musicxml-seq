@@ -10,6 +10,8 @@
     "pitch": "Pitch",
     "transpose": "Transpose",
     "download": "MusicXML",
+    "musicXML": "MusixXML(for NEUTRINO)",
+    "ust": "UST(testing)",
     "inputLyrics": "Input as Romaji",
     "close": "Close",
     "japanese": "Japanese Hiragana",
