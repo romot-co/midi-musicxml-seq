@@ -25,11 +25,13 @@ module.exports = {
     "lyrics": ["Lyrics"],
     "message.failedToLoadFile": ["Failed to load file"],
     "message.noTracks": ["No tracks"],
+    "musicXML": ["MusixXML(for NEUTRINO)"],
     "pitch": ["Pitch"],
     "startHere": ["Upload MIDI file to edit lyrics, convert to MusicXML"],
     "title": ["Convert MusixXML from MIDI and Lyrics - α"],
     "track": ["Track"],
     "transpose": ["Transpose"],
+    "ust": ["UST(testing)"],
     "velocity": ["Velocity"],
   },
 };
