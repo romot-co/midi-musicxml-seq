@@ -2,6 +2,8 @@
 
 ![screenshot-romot-co github io-2020 05 (6)](https://user-images.githubusercontent.com/9082140/82848087-dcccad00-9f2c-11ea-937c-14eaa075693c.png)
 
+Online lyric editor/sequencer from your own midi file.
+
 https://note.com/romot/n/nf3a7346bfa02 (Japanese)
 
 - Import your MIDI, edit lyrics and convert to MusicXML(for NEUTRINO AI VocalSynthesizer) / UST (for UTAU) by ease of use GUI online.
