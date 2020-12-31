@@ -1,8 +1,10 @@
-## TL;DR
+## About
 
 ![screenshot-romot-co github io-2020 05 (6)](https://user-images.githubusercontent.com/9082140/82848087-dcccad00-9f2c-11ea-937c-14eaa075693c.png)
 
-- Import your MIDI, edit lyrics and convert to MusicXML(for NEUTRINO VocalSynthesizer) by ease of use GUI
+https://note.com/romot/n/nf3a7346bfa02 (Japanese)
+
+- Import your MIDI, edit lyrics and convert to MusicXML(for NEUTRINO AI VocalSynthesizer / UTAU) by ease of use GUI on web
 - Can enter lyrics in bulk or for each note in Japanese or English(Roman)
 - Similar to a DAW sequencer UI and can use the X-axis scale
 - Can select MIDI track / change BPM / transpose
