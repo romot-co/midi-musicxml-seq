@@ -27,23 +27,24 @@ const Note = props => {
   };
 
   const handleChange = (e) => {
-    setValue(e.target.value);
+    const value = typeof(e.target.value) === 'string' ? e.target.value.trim() : e.target.value;
+    setValue(value);
     if (locale === 'ja') {
-      if (!e.target.value) {
+      if (!value) {
         onChange(' ', index);
-      } else if (e.target.value.length === 1) {
-        onChange(e.target.value[0], index);
-      } else if (hasSmallLetter(e.target.value)) {
-        onChange(e.target.value, index);
+      } else if (value.length === 1) {
+        onChange(value[0], index);
+      } else if (hasSmallLetter(value)) {
+        onChange(value, index);
       };
     }
     if (locale === 'en') {
-      if (!e.target.value) {
+      if (!value) {
         onChange(' ', index);
-      } else if (e.target.value.length === 1) {
-        onChange(e.target.value[0], index);
-      } else if (isRomaji(e.target.value)) {
-        onChange(e.target.value, index);
+      } else if (value.length === 1) {
+        onChange(value[0], index);
+      } else if (isRomaji(value)) {
+        onChange(value, index);
       };
     }
   };
