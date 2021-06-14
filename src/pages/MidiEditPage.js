@@ -92,11 +92,11 @@ const MidiEditPage = (props) => {
         } else {
           const midi = new Midi(midiData);
           const tempo = midi.header.tempos.length ? midi.header.tempos.slice(-1)[0].bpm : 120;
-          setMidi(midi);
-          setTrackIndex(0);
+          setTrackIndex(midi.tracks.findIndex(v => v.notes.length > 0));
           setTempo(tempo);
           setLyric(midi.tracks[trackIndex].notes.map(() => locale === 'ja' ? 'ら' : 'ra'));
           setYScale(24); //temporary
+          setMidi(midi);
           document.querySelector('#sequence-key-72').scrollIntoView();
           setExpandLyric(true);
           document.querySelector('#lyricEditInput').focus();
