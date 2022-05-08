@@ -11,7 +11,7 @@
     "bootstrap": "^4.6.0",
     "jaco": "^4.0.0",
     "lisan": "^0.1.1",
-    "node-sass": "^4.13.1",
+    "node-sass": "^7.0.0",
     "react": "^16.14.0",
     "react-dom": "^16.14.0",
     "react-helmet": "^5.2.1",
