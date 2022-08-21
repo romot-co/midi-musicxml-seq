@@ -17,7 +17,7 @@ export const parseMidiToMusicXML = (midi, lyric, locale, trackIndex, tempo, tran
       if (max > note.ticks && (min <= note.ticks || min < (note.ticks + note.durationTicks))) {
         return {
           ...note,
-          lyric: locale === 'ja' ? lyric[index] : toKana(lyric[index]) || '',
+          lyric: locale === 'ja' ? lyric[index] || '' : toKana(lyric[index]) || '',
         };
       } else {
         return null;
@@ -148,15 +148,10 @@ export const parseMidiToMusicXML = (midi, lyric, locale, trackIndex, tempo, tran
         line: {_text: '2'},
       },
     },
-    direction: {
+    sound: {
       _attributes: {
-        placement: 'above',
-      },
-      sound: {
-        _attributes: {
-          tempo: tempo,
-        }
-      },
+        tempo: tempo,
+      }
     },
     note: {
       rest: {},
@@ -195,6 +190,8 @@ export const parseMidiToMusicXML = (midi, lyric, locale, trackIndex, tempo, tran
       },
     },
   };
+
+  console.log(measures);
 
   const xml = xmljs.json2xml(json, {compact: true, spaces: 2});
   return xml;
