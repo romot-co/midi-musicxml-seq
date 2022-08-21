@@ -20,6 +20,7 @@
     "startHere": "Upload MIDI file to edit lyrics, convert to MusicXML",
     "message.noTracks": "No tracks",
     "message.failedToLoadFile": "Failed to load file",
+    "message.noNotes": "No notes in this track",
     "helpModal.about": "About",
     "helpModal.about1": "Upload your MIDI and start input lyrics",
     "helpModal.about2": "your MIDI file is not upload anywhere (it works on your PC)",

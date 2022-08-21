@@ -18,7 +18,7 @@ const Sequence = props => {
   const header = data.header;
   const beats = (data && header.timeSignatures && header.timeSignatures.length > 0) ? header.timeSignatures[0].timeSignature : [4,4];
   const notes = data && data.tracks[trackIndex].notes;
-  const totalTicks = notes ? (notes.slice(-1)[0].ticks + notes.slice(-1)[0].durationTicks) : 7680;
+  const totalTicks = notes && notes.length ? (notes.slice(-1)[0].ticks + notes.slice(-1)[0].durationTicks) : 7680;
   const ppq = data ? header.ppq : 480;
   const measureTicks = ppq * beats[1] * (beats[0] / beats[1]);
   const measuresCount = Math.ceil(totalTicks / measureTicks);
