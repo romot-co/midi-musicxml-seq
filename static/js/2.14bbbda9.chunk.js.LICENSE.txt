@@ -5,7 +5,7 @@ object-assign
 */
 
 /*!
-  Copyright (c) 2018 Jed Watson.
+  Copyright (c) 2017 Jed Watson.
   Licensed under the MIT License (MIT), see
   http://jedwatson.github.io/classnames
 */
@@ -19,7 +19,7 @@ object-assign
 
 /*! http://mths.be/fromcodepoint v0.1.0 by @mathias */
 
-/*! ieee754. BSD-3-Clause License. Feross Aboukhadijeh <https://feross.org/opensource> */
+/*! safe-buffer. MIT License. Feross Aboukhadijeh <https://feross.org/opensource> */
 
 /** @license React v0.19.1
  * scheduler.production.min.js

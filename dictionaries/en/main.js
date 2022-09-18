@@ -24,6 +24,7 @@ module.exports = {
     "japanese": ["Japanese Hiragana"],
     "lyrics": ["Lyrics"],
     "message.failedToLoadFile": ["Failed to load file"],
+    "message.noNotes": ["No notes in this track"],
     "message.noTracks": ["No tracks"],
     "musicXML": ["MusixXML(for NEUTRINO)"],
     "pitch": ["Pitch"],
