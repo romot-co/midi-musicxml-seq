@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 //import { useHistory, useLocation } from 'react-router-dom';
-import { Helmet } from 'react-helmet';
+import { Helmet, HelmetProvider } from 'react-helmet-async';
 import {
   Button,
   Col,
@@ -35,7 +35,6 @@ const MidiEditPage = (props) => {
   const [loaded, setLoaded] = useState(false);
   const [locale, setLocale] = useState((window.navigator.language === "ja" || window.navigator.language === "ja-JP") ? 'ja' : 'en');
   const fileInputRef = useRef(null);
-  const uploadRef = useRef(null);
   const [midi, setMidi] = useState(false);
   const [trackIndex, setTrackIndex] = useState(0);
   const [tempo, setTempo] = useState(120);
@@ -50,16 +49,28 @@ const MidiEditPage = (props) => {
   const [showHelp, setShowHelp] = useState(false);
   const updateLocale = (lang) => {
     lisan.setLocaleName(lang);
-    import(`../../public/dictionaries/${lang}/main`).then((dict) => {
-      lisan.add(dict);
-      setLoaded(true);
-      setLocale(lang);
-      if (lang === 'ja') {
-        setLyric(lyric.map(v => toKana(v)));
-      } else {
-        setLyric(lyric.map(v => toRomaji(v)));
-      }
-    });
+
+    // 辞書ファイルをfetchで取得してJSONとして評価
+    fetch(`/dictionaries/${lang}/main.js`)
+      .then(response => response.text())
+      .then(text => {
+        // CommonJSスタイルの辞書をevalで評価
+        const dictModule = { exports: {} };
+        new Function('module', text)(dictModule);
+        const dict = dictModule.exports;
+
+        lisan.add(dict);
+        setLoaded(true);
+        setLocale(lang);
+        if (lang === 'ja') {
+          setLyric(lyric.map(v => toKana(v)));
+        } else {
+          setLyric(lyric.map(v => toRomaji(v)));
+        }
+      })
+      .catch(error => {
+        console.error('辞書の読み込みに失敗しました:', error);
+      });
   };
   useEffect(() => {
     if (locale) updateLocale(locale);
@@ -146,194 +157,201 @@ const MidiEditPage = (props) => {
     return ''
   } else {
     return (
-      <>
-        <Helmet>
-          <title>{t('title')}</title>
-          <body />
-        </Helmet>
-        <Navbar color="light" light className="fixed-top">
-          <div className="d-flex align-items-center mr-auto">
-            <Button
-              type="button"
-              color={!midi ? 'primary' : 'secondary'}
-              className="btn-circle mr-3"
-              onClick={handleClickUpload}
-              id="upload"
-              ref={uploadRef}
-            >
-              <i className="icon ri-folder-open-line" />
-            </Button>
-            { start &&
-              <Tooltip
-                target="upload"
-                isOpen={openTooltipUpload}
-                delay={4000}
-                fade
+      <HelmetProvider>
+        <div>
+          <Helmet>
+            <title>{t('title')}</title>
+            <body />
+          </Helmet>
+          <Navbar color="light" light className="fixed-top">
+            <div className="d-flex align-items-center ms-auto">
+              <Button
+                type="button"
+                color={!midi ? 'primary' : 'secondary'}
+                className="btn-circle me-3"
+                onClick={handleClickUpload}
+                id="upload"
               >
-                {t('startHere')}
-              </Tooltip>
-            }
-            <input
-              ref={fileInputRef}
-              type="file"
-              id="midi-file-input"
-              className="d-none"
-              accept="audio/midi, audio/x-midi"
-              onChange={handleChangeFile}
-            />
-            <span className="navbar-text mr-2">{t("track")}</span>
-            <Input
-              type="select"
-              color="light"
-              size="sm"
-              onChange={handleChangeTrack}
-              style={{width: '120px'}}
-              className="mr-3"
-              disabled={!midi}
-            >
-              {midi && midi.toJSON().tracks.map((v,i) => <option key={i} value={i}>{i+1}: {v.name}</option>)}
-            </Input>
-            <span className="navbar-text mr-2">{t("bpm")}</span>
-            <Input
-              type="number"
-              color="light"
-              size="sm"
-              value={tempo}
-              onChange={handleChangeTempo}
-              style={{width: '70px'}}
-              className="mr-3"
-              disabled={!midi}
-            />
-            <span className="navbar-text mr-2">{t("transpose")}</span>
-            <Input
-              type="number"
-              min="-24"
-              max="24"
-              size="sm"
-              value={transpose}
-              style={{width: '70px'}}
-              onChange={handleChangeTranspose}
-              disabled={!midi}
-            />
-          </div>
-          <UncontrolledDropdown>
-            <DropdownToggle
-              color="primary"
-            >
-              {t("download")}
-              <i className="ml-2 icon ri-download-2-line" />
-            </DropdownToggle>
-            <DropdownMenu>
-              <DropdownItem onClick={handleGenerateMusicXML}>{t('musicXML')}</DropdownItem>
-              <DropdownItem onClick={handleGenerateUST}>{t('ust')}</DropdownItem>
-            </DropdownMenu>
-          </UncontrolledDropdown>
-          <UncontrolledDropdown>
-            <DropdownToggle color="light" className="btn btn-circle">
-              <i className="icon ri-more-2-fill" />
-            </DropdownToggle>
-            <DropdownMenu>
-              <DropdownItem onClick={() => updateLocale('en')}>{t('english')}</DropdownItem>
-              <DropdownItem onClick={() => updateLocale('ja')}>{t('japanese')}</DropdownItem>
-              <DropdownItem divider />
-              <DropdownItem onClick={() => setShowHelp(true)}>{t('about')}</DropdownItem>
-            </DropdownMenu>
-          </UncontrolledDropdown>
-        </Navbar>
-        <Container fluid className="px-0" style={{marginTop: '53px'}}>
-          <Row className="no-gutters" onClick={() => setExpandLyric(false)}>
-            <Col>
-              <Sequence
-                midi={midi}
-                trackIndex={trackIndex}
-                transpose={transpose}
-                lyric={lyric}
-                setLyric={setLyric}
-                xScale={xScale}
-                yScale={yScale}
-                locale={locale}
+                <i className="icon ri-folder-open-line" />
+              </Button>
+              { start &&
+                <Tooltip
+                  target="upload"
+                  isOpen={openTooltipUpload}
+                  delay={4000}
+                  placement="bottom"
+                  fade
+                  timeout={150}
+                >
+                  {t('startHere')}
+                </Tooltip>
+              }
+              <input
+                ref={fileInputRef}
+                type="file"
+                id="midi-file-input"
+                className="d-none"
+                accept="audio/midi, audio/x-midi"
+                onChange={handleChangeFile}
               />
-            </Col>
-          </Row>
-          <Row>
-            <div className="sequence-controls">
-              <div className="d-flex align-items-start">
-                <div className="w-100 p-2">
-                  <Nav pills className="mb-2">
-                    <NavItem>
-                      <NavLink
-                        href="#"
-                        onClick={() => { setTab('lyrics') }}
-                        active={tab === 'lyrics'}
-                      >
-                        {t('lyrics')}
-                      </NavLink>
-                    </NavItem>
-                    <NavItem>
-                      <NavLink
-                        href="#"
-                        onClick={() => { setTab('velocity') }}
-                        active={tab === 'velocity'}
-                        disabled
-                      >
-                        {t('velocity')}
-                      </NavLink>
-                    </NavItem>
-                    <NavItem>
-                      <NavLink
-                        href="#"
-                        onClick={() => { setTab('pitch') }}
-                        active={tab === 'pitch'}
-                        disabled
-                      >
-                        {t('pitch')}
-                      </NavLink>
-                    </NavItem>
-                  </Nav>
-                  <TabContent activeTab={tab}>
-                    <TabPane tabId="lyrics">
-                      <LyricEdit
-                        lyric={lyric}
-                        setLyric={setLyric}
-                        expand={expandLyric}
-                        setExpand={setExpandLyric}
-                        limit={midi ? midi.tracks[trackIndex].notes.length : 0}
-                        locale={locale}
-                        disabled={!midi}
-                      />
-                      { start &&
-                        <UncontrolledTooltip
-                          target="lyricEditInput"
-                          fade
+              <span className="navbar-text me-2">{t("track")}</span>
+              <Input
+                type="select"
+                color="light"
+                bsSize="sm"
+                onChange={handleChangeTrack}
+                style={{width: '120px'}}
+                className="me-3"
+                disabled={!midi}
+              >
+                {midi && midi.toJSON().tracks.map((v,i) => <option key={i} value={i}>{i+1}: {v.name}</option>)}
+              </Input>
+              <span className="navbar-text me-2">{t("bpm")}</span>
+              <Input
+                type="number"
+                color="light"
+                bsSize="sm"
+                value={tempo}
+                onChange={handleChangeTempo}
+                style={{width: '70px'}}
+                className="me-3"
+                disabled={!midi}
+              />
+              <span className="navbar-text me-2">{t("transpose")}</span>
+              <Input
+                type="number"
+                min="-24"
+                max="24"
+                bsSize="sm"
+                value={transpose}
+                style={{width: '70px'}}
+                onChange={handleChangeTranspose}
+                disabled={!midi}
+              />
+            </div>
+            <div className="d-flex ms-auto">
+              <UncontrolledDropdown className="me-2">
+                <DropdownToggle
+                  color="primary"
+                >
+                  {t("download")}
+                  <i className="ms-2 icon ri-download-2-line" />
+                </DropdownToggle>
+                <DropdownMenu>
+                  <DropdownItem onClick={handleGenerateMusicXML}>{t('musicXML')}</DropdownItem>
+                  <DropdownItem onClick={handleGenerateUST}>{t('ust')}</DropdownItem>
+                </DropdownMenu>
+              </UncontrolledDropdown>
+              <UncontrolledDropdown>
+                <DropdownToggle color="light" className="btn btn-circle">
+                  <i className="icon ri-more-2-fill" />
+                </DropdownToggle>
+                <DropdownMenu end>
+                  <DropdownItem onClick={() => updateLocale('en')}>{t('english')}</DropdownItem>
+                  <DropdownItem onClick={() => updateLocale('ja')}>{t('japanese')}</DropdownItem>
+                  <DropdownItem divider />
+                  <DropdownItem onClick={() => setShowHelp(true)}>{t('about')}</DropdownItem>
+                </DropdownMenu>
+              </UncontrolledDropdown>
+            </div>
+          </Navbar>
+          <Container fluid className="px-0" style={{marginTop: '53px'}}>
+            <Row className="g-0" onClick={() => setExpandLyric(false)}>
+              <Col>
+                <Sequence
+                  midi={midi}
+                  trackIndex={trackIndex}
+                  transpose={transpose}
+                  lyric={lyric}
+                  setLyric={setLyric}
+                  xScale={xScale}
+                  yScale={yScale}
+                  locale={locale}
+                />
+              </Col>
+            </Row>
+            <Row>
+              <div className="sequence-controls">
+                <div className="d-flex align-items-start">
+                  <div className="w-100 p-2">
+                    <Nav pills className="mb-2">
+                      <NavItem>
+                        <NavLink
+                          href="#"
+                          onClick={() => { setTab('lyrics') }}
+                          active={tab === 'lyrics'}
                         >
-                          {t('inputLyrics')}
-                        </UncontrolledTooltip>
-                      }
-                    </TabPane>
-                  </TabContent>
-                </div>
-                <div className="px-3">
-                  <Input
-                    type="range"
-                    className="sequence-scale-range"
-                    max="0.5"
-                    min="0.025"
-                    step="0.025"
-                    value={xScale}
-                    onChange={handleChangeXScale}
-                  />
+                          {t('lyrics')}
+                        </NavLink>
+                      </NavItem>
+                      <NavItem>
+                        <NavLink
+                          href="#"
+                          onClick={() => { setTab('velocity') }}
+                          active={tab === 'velocity'}
+                          disabled
+                        >
+                          {t('velocity')}
+                        </NavLink>
+                      </NavItem>
+                      <NavItem>
+                        <NavLink
+                          href="#"
+                          onClick={() => { setTab('pitch') }}
+                          active={tab === 'pitch'}
+                          disabled
+                        >
+                          {t('pitch')}
+                        </NavLink>
+                      </NavItem>
+                    </Nav>
+                    <TabContent activeTab={tab}>
+                      <TabPane tabId="lyrics">
+                        <LyricEdit
+                          lyric={lyric}
+                          setLyric={setLyric}
+                          expand={expandLyric}
+                          setExpand={setExpandLyric}
+                          limit={midi ? midi.tracks[trackIndex].notes.length : 0}
+                          locale={locale}
+                          disabled={!midi}
+                        />
+                        { start &&
+                          <UncontrolledTooltip
+                            target="lyricEditInput"
+                            placement="bottom"
+                            fade
+                            timeout={150}
+                          >
+                            {t('inputLyrics')}
+                          </UncontrolledTooltip>
+                        }
+                      </TabPane>
+                    </TabContent>
+                  </div>
+                  <div className="px-3">
+                    <Input
+                      type="range"
+                      className="sequence-scale-range"
+                      max="0.5"
+                      min="0.025"
+                      step="0.025"
+                      value={xScale}
+                      onChange={handleChangeXScale}
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
-          </Row>
-        </Container>
-        <HelpModal
-          show={showHelp}
-          handleClose={() => {
-            setShowHelp(false);
-          }}
-        />
-      </>
+            </Row>
+          </Container>
+          <HelpModal
+            show={showHelp}
+            handleClose={() => {
+              setShowHelp(false);
+            }}
+          />
+        </div>
+      </HelmetProvider>
     )
   }
 }

@@ -1,3 +1,68 @@
-@import 'scss/bootstrap/index.scss';
-@import 'scss/custom/index.scss';
-@import 'scss/vendor/index.scss';
+// Bootstrap 5のインポート
+@import "bootstrap/scss/bootstrap";
+
+// カスタムコンポーネントのインポート
+@import "custom/_sequence";
+@import "custom/_util";
+
+// カスタム変数とオーバーライド
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// コンポーネントのオーバーライド
+.navbar {
+  border-bottom: 1px solid #ddd;
+}
+
+.dropdown-menu {
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.dropdown-item {
+  align-items: center;
+  display: flex;
+
+  &:focus {
+    outline: none;
+  }
+
+  &:active {
+    color: #fff;
+  }
+
+  &:disabled {
+    color: #ced4da;
+  }
+}
+
+.form-control:disabled {
+  color: #adb5bd;
+}
+
+.btn .icon {
+  position: relative;
+  top: 1px;
+}
+
+.btn-circle {
+  border-radius: 50%;
+  padding: 0;
+  height: 36px;
+  width: 36px;
+}
+
+.btn.btn-primary:disabled {
+  background: #6c757d;
+  border-color: #6c757d;
+}
+
+.navbar-text {
+  color: #6c757d;
+  font-size: 0.875rem;
+}
+
+.nav-pills .nav-link, .nav-pills .show > .nav-link {
+  font-size: 0.875rem;
+}
