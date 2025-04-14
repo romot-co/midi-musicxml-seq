@@ -4,30 +4,30 @@
   "private": true,
   "homepage": "https://romot-co.github.io/midi-musicxml-seq/",
   "dependencies": {
+    "@popperjs/core": "^2.11.8",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
     "@tonejs/midi": "^2.0.27",
-    "bootstrap": "^4.6.0",
+    "bootstrap": "^5.3.5",
+    "fast-xml-parser": "^5.2.0",
     "jaco": "^4.0.0",
     "lisan": "^0.1.1",
-    "react": "^16.14.0",
-    "react-dom": "^16.14.0",
-    "react-helmet": "^5.2.1",
-    "react-router-dom": "^5.2.0",
-    "react-scripts": "3.4.0",
-    "reactstrap": "^8.9.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-helmet-async": "^2.0.5",
+    "react-router-dom": "^7.5.0",
+    "reactstrap": "^9.2.3",
     "remixicon": "^2.5.0",
-    "wanakana": "^4.0.2",
-    "xml-js": "^1.6.11"
+    "wanakana": "^4.0.2"
   },
   "scripts": {
     "lisan:compile": "lisan compile",
-    "start": "yarn run lisan:compile -w & yarn run react-scripts start",
-    "build": "yarn run lisan:compile & yarn run react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "predeploy": "yarn run build",
+    "dev": "npm run lisan:compile -- -w & vite",
+    "build": "npm run lisan:compile & vite build",
+    "preview": "vite preview",
+    "test": "vitest",
+    "predeploy": "npm run build",
     "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
@@ -46,11 +46,20 @@
     ]
   },
   "devDependencies": {
+    "@babel/plugin-transform-react-jsx": "^7.25.9",
+    "@babel/preset-env": "^7.26.9",
+    "@babel/preset-react": "^7.26.3",
+    "@vitejs/plugin-react": "^4.2.1",
     "cross-env": "^7.0.3",
     "eslint": "^6.8.0",
-    "gh-pages": "^2.2.0",
+    "gh-pages": "^6.3.0",
     "lisan-cli": "^0.1.1",
     "prettier": "^1.19.1",
-    "sass": "^1.54.5"
+    "sass": "^1.54.5",
+    "vite": "^6.2.6",
+    "vitest": "^3.1.1"
+  },
+  "overrides": {
+    "json5": "^2.2.3"
   }
 }

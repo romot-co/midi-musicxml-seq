@@ -1,4 +1,4 @@
-import xmljs from 'xml-js';
+import { XMLBuilder } from 'fast-xml-parser';
 import { toKana } from 'wanakana';
 import { midiNumberToPitchMusicXML } from 'utils/convert';
 
@@ -193,6 +193,14 @@ export const parseMidiToMusicXML = (midi, lyric, locale, trackIndex, tempo, tran
 
   console.log(measures);
 
-  const xml = xmljs.json2xml(json, {compact: true, spaces: 2});
+  const builder = new XMLBuilder({
+    ignoreAttributes: false,
+    format: true,
+    attributeNamePrefix: '_attributes.',
+    textNodeName: '_text'
+  });
+  const xml = `<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE score-partwise PUBLIC "-//Recordare//DTD MusicXML 3.1 Partwise//EN" "http://www.musicxml.org/dtds/partwise.dtd">
+${builder.build(json['score-partwise'])}`;
   return xml;
 };

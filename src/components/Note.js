@@ -80,6 +80,8 @@ const Note = props => {
           delay={{
             show: 200,
           }}
+          fade
+          timeout={150}
         >{value}{' '}<span className="text-muted">{note.name}</span></UncontrolledTooltip>
       }
     </div>
