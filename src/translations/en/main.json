@@ -1,7 +1,7 @@
 {
   "locale": "en",
   "entries": {
-    "title": "Convert MusixXML from MIDI and Lyrics - α",
+    "title": "Convert MusicXML from MIDI and Lyrics - α",
     "changeMidi": "Import MIDI",
     "track": "Track",
     "bpm": "BPM",
@@ -10,7 +10,7 @@
     "pitch": "Pitch",
     "transpose": "Transpose",
     "download": "MusicXML",
-    "musicXML": "MusixXML(for NEUTRINO)",
+    "musicXML": "MusicXML(for NEUTRINO)",
     "ust": "UST(testing)",
     "inputLyrics": "Input as Romaji",
     "close": "Close",

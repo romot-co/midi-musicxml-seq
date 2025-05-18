@@ -26,7 +26,7 @@ module.exports = {
     "lyrics": ["歌詞入力"],
     "message.failedToLoadFile": ["ファイルが読み込みませんでした"],
     "message.noTracks": ["トラックがありません"],
-    "musicXML": ["MusixXML(NEUTRINO用)"],
+    "musicXML": ["MusicXML(NEUTRINO用)"],
     "pitch": ["ピッチ"],
     "startHere": ["MIDIファイルを読み込んで歌詞の入力をはじめる"],
     "title": ["MIDIに歌詞入力してMusicXMLにするやつ - α版"],
