@@ -98,20 +98,25 @@ const MidiEditPage = (props) => {
     reader.onload = (e) => {
       const midiData = e.target.result;
       if (midiData) {
-        if (midiData.tracks < 1) {
+        const midi = new Midi(midiData);
+        if (!midi.tracks || midi.tracks.length < 1) {
           window.alert(t('message.noTracks'));
-        } else {
-          const midi= new Midi(midiData);
-          const tempo = midi.header.tempos.length ? midi.header.tempos.slice(-1)[0].bpm : 120;
-          setTrackIndex(midi.tracks.findIndex(v => v.notes.length > 0));
-          setTempo(tempo);
-          setMidi(midi);
-          setLyric(midi.tracks[trackIndex].notes.map(() => locale === 'ja' ? 'ら' : 'ra'));
-          setYScale(24); //temporary
-          document.querySelector('#sequence-key-72').scrollIntoView();
-          setExpandLyric(true);
-          document.querySelector('#lyricEditInput').focus();
+          return;
         }
+        const index = midi.tracks.findIndex(v => v.notes.length > 0);
+        if (index === -1) {
+          window.alert(t('message.noTracks'));
+          return;
+        }
+        const tempo = midi.header.tempos.length ? midi.header.tempos.slice(-1)[0].bpm : 120;
+        setTrackIndex(index);
+        setTempo(tempo);
+        setMidi(midi);
+        setLyric(midi.tracks[index].notes.map(() => locale === 'ja' ? 'ら' : 'ra'));
+        setYScale(24); //temporary
+        document.querySelector('#sequence-key-72').scrollIntoView();
+        setExpandLyric(true);
+        document.querySelector('#lyricEditInput').focus();
       }
     };
     reader.onerror = (e) => {
