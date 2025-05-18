@@ -27,7 +27,7 @@ const Note = props => {
   };
 
   const handleChange = (e) => {
-    const value = typeof(e.target.value) === 'string' ? e.target.value.trim() : e.target.value;
+    const value = e.target.value.trim();
     setValue(value);
     if (locale === 'ja') {
       if (!value) {
