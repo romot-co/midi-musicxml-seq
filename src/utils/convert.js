@@ -13,7 +13,7 @@ export const midiNumberToPitchMusicXML = (midiNumber, transpose = 0) => {
       _text: step,
     },
     alter: {
-      _text: alter > 0 ? `+${alter.toString()}` : alter.toString()
+      _text: alter.toString(),
     },
     octave: {
       _text: octave.toString(),
