@@ -191,7 +191,6 @@ export const parseMidiToMusicXML = (midi, lyric, locale, trackIndex, tempo, tran
     },
   };
 
-  console.log(measures);
 
   const builder = new XMLBuilder({
     ignoreAttributes: false,
