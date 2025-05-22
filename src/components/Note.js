@@ -21,7 +21,7 @@ const Note = props => {
   };
   const handleKeyPress = (e) => {
     const key = e.key.toLowerCase();
-    if (key === 'enter' || (key === 'tab' && lyric.length < index)) {
+    if (key === 'enter' || (key === 'tab' && index < lyric.length - 1)) {
       setEdit(index + 1);
     }
   };
