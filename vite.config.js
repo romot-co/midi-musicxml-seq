@@ -21,13 +21,13 @@ export default defineConfig({
   resolve: {
     alias: {
       // ソースディレクトリを起点としたパス解決のためのエイリアス
-      'scss': path.resolve(__dirname, './src/scss'),
-      'pages': path.resolve(__dirname, './src/pages'),
-      'components': path.resolve(__dirname, './src/components'),
-      'utils': path.resolve(__dirname, './src/utils'),
-      'modals': path.resolve(__dirname, './src/modals'),
-      'translations': path.resolve(__dirname, './src/translations'),
-      'bootstrap': path.resolve(__dirname, './node_modules/bootstrap'),
+      scss: path.resolve(__dirname, './src/scss'),
+      pages: path.resolve(__dirname, './src/pages'),
+      components: path.resolve(__dirname, './src/components'),
+      utils: path.resolve(__dirname, './src/utils'),
+      modals: path.resolve(__dirname, './src/modals'),
+      translations: path.resolve(__dirname, './src/translations'),
+      bootstrap: path.resolve(__dirname, './node_modules/bootstrap'),
     },
     extensions: ['.mjs', '.js', '.jsx', '.ts', '.tsx', '.json']
   },
@@ -41,6 +41,13 @@ export default defineConfig({
   server: {
     port: 3000, // CRAと同じポートに設定
     hmr: true, // Hot Module Replacementを有効化
+  },
+  //  プレビューサーバー設定 (Render用)
+  preview: {
+    allowedHosts: [
+      'midi-musicxml-seq.onrender.com' // Renderのホストを許可
+    ],
+    port: 4173 // デフォルトのVite previewポート
   },
   // ビルド設定
   build: {

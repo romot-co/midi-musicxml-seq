@@ -5,169 +5,141 @@ import { midiNumberToPitchMusicXML } from 'utils/convert';
 export const parseMidiToMusicXML = (midi, lyric, locale, trackIndex, tempo, transpose) => {
   const raw = midi.toJSON();
   const header = raw.header;
-  const beats = Array.isArray(header.timeSignatures) && header.timeSignatures.length > 0 ? header.timeSignatures[0].timeSignature : [4,4];
   const track = raw.tracks[trackIndex];
-  const totalTicks = track.notes.slice(-1)[0].durationTicks + track.notes.slice(-1)[0].ticks;
-  const measureTicks = header.ppq * beats[1] * (beats[0] / beats[1]);
+
+  const timeSignature = Array.isArray(header.timeSignatures) && header.timeSignatures.length > 0
+    ? header.timeSignatures[0].timeSignature
+    : [4, 4];
+  const [beatsPerMeasure, beatUnit] = timeSignature;
+  const measureTicks = header.ppq * beatsPerMeasure;
+  const totalTicks = track.notes.slice(-1)[0]?.ticks + track.notes.slice(-1)[0]?.durationTicks || 0;
   const measuresCount = Math.ceil(totalTicks / measureTicks);
-  let measures = [...Array(measuresCount).keys()].map((_,measureIndex) => {
-    const min = measureIndex * measureTicks;
-    const max = min + measureTicks;
-    const measureNotes = track.notes.map((note, index) => {
-      if (max > note.ticks && (min <= note.ticks || min < (note.ticks + note.durationTicks))) {
-        return {
-          ...note,
-          lyric: locale === 'ja' ? lyric[index] || '' : toKana(lyric[index]) || '',
-        };
-      } else {
+
+  const measures = Array.from({ length: measuresCount }, (_, measureIndex) => {
+    const measureStart = measureIndex * measureTicks;
+    const measureEnd = measureStart + measureTicks;
+
+    const measureNotes = track.notes
+      .map((note, i) => {
+        if (
+          note.ticks < measureEnd &&
+          (note.ticks + note.durationTicks) > measureStart
+        ) {
+          return {
+            ...note,
+            lyric: locale === 'ja' ? lyric[i] || '' : toKana(lyric[i] || ''),
+          };
+        }
         return null;
-      }
-    }).filter(v => v !== null);
-    let notes = [];
-    // full rest
+      })
+      .filter(Boolean);
+
+    const notes = [];
+
     if (measureNotes.length === 0) {
       notes.push({
         rest: {},
-        duration: {
-          _text: measureTicks
-        },
+        duration: { _text: measureTicks },
+        voice: { _text: 1 },
+        type: { _text: 'whole' },
       });
     } else {
-      measureNotes.forEach((current, index, origin) => {
-        const before = origin[index - 1] || false;
-        const next = origin[index + 1] || false;
-        const currentLast = current.ticks + current.durationTicks;
-        const beforeLast = before ? before.ticks + before.durationTicks : false;
+      measureNotes.forEach((note, i) => {
+        const prev = measureNotes[i - 1];
+        const next = measureNotes[i + 1];
+        const noteStart = Math.max(note.ticks, measureStart);
+        const noteEnd = Math.min(note.ticks + note.durationTicks, measureEnd);
+        const duration = noteEnd - noteStart;
 
-        // First note = rest
-        if (!before && current.ticks > min) {
+        // Insert rest before note if there's a gap
+        if (!prev && note.ticks > measureStart) {
           notes.push({
             rest: {},
-            duration: {
-              _text: current.ticks - min,
-            }
+            duration: { _text: note.ticks - measureStart },
+            voice: { _text: 1 },
+            type: { _text: 'quarter' },
           });
-        // First note = tied stop
-        } else if (!before && current.ticks < min) {
-          notes.push({
-            _attributes: {
-              dynamics: current.velocity * 100,
-            },
-            pitch: midiNumberToPitchMusicXML(current.midi, transpose),
-            duration: {
-              _text: currentLast - min,
-            },
-            tie: {
-              _attributes: {
-                type: 'stop',
-              },
-            }
-          });
-        // Rest note between before to current
-        } else if (before && beforeLast < current.ticks) {
+        } else if (prev) {
+          const prevEnd = prev.ticks + prev.durationTicks;
+          if (note.ticks > prevEnd) {
+            notes.push({
+              rest: {},
+              duration: { _text: note.ticks - prevEnd },
+              voice: { _text: 1 },
+              type: { _text: 'eighth' },
+            });
+          }
+        }
+
+        const pitch = midiNumberToPitchMusicXML(note.midi, transpose);
+        const isStartTie = note.ticks < measureStart && (note.ticks + note.durationTicks) > measureStart;
+        const isEndTie = (note.ticks + note.durationTicks) > measureEnd;
+
+        const noteEntry = {
+          pitch,
+          duration: { _text: duration },
+          voice: { _text: 1 },
+          type: { _text: 'eighth' },
+          dynamics: {
+            'f': {},
+          },
+          lyric: {
+            syllabic: { _text: 'single' },
+            text: { _text: note.lyric },
+          },
+        };
+
+        if (isStartTie) {
+          noteEntry.tie = { _attributes: { type: 'stop' } };
+        } else if (isEndTie) {
+          noteEntry.tie = { _attributes: { type: 'start' } };
+        }
+
+        notes.push(noteEntry);
+
+        // Insert rest after last note
+        if (!next && noteEnd < measureEnd) {
           notes.push({
             rest: {},
-            duration: {
-              _text: current.ticks - beforeLast,
-            }
+            duration: { _text: measureEnd - noteEnd },
+            voice: { _text: 1 },
+            type: { _text: 'quarter' },
           });
         }
-        // Last note = tied start
-        if (currentLast > max) {
-          notes.push({
-            _attributes: {
-              dynamics: current.velocity * 100,
-            },
-            pitch: midiNumberToPitchMusicXML(current.midi, transpose),
-            duration: {
-              _text: max - current.ticks,
-            },
-            lyric: {
-              text: {_text: current.lyric,}
-            },
-            tie: {
-              _attributes: {
-                type: 'start',
-              },
-            }
-          });
-        } else if (current.ticks >= min) {
-          // current note
-          //const currentDurationTicks = next && next.ticks >= currentLast ? current.durationTicks - (next.ticks - currentLast) : current.durationTicks;
-          notes.push({
-            _attributes: {
-              dynamics: current.velocity * 100,
-            },
-            pitch: midiNumberToPitchMusicXML(current.midi, transpose),
-            duration: {
-              _text: current.durationTicks,
-            },
-            lyric: {
-              text: {_text: current.lyric,}
-            },
-          });
-        };
-        // last note = rest
-        if (!next && max > (currentLast)) {
-          notes.push({
-            rest: {},
-            duration: {
-              _text: max - currentLast,
-            }
-          });
-        };
       });
     }
+
     return {
       _attributes: {
-        number: measureIndex + 2,
+        number: `${measureIndex + 2}`,
       },
       note: notes,
     };
   });
 
+  // First measure with attributes and tempo
   measures.unshift({
-    _attributes: {
-      number: '1',
-    },
+    _attributes: { number: '1' },
     attributes: {
-      divisions: {_text: header.ppq},
-      key: {
-        fifths: {_text: '0'},
-      },
+      divisions: { _text: header.ppq },
+      key: { fifths: { _text: 0 } },
       time: {
-        beats: {
-          _text: beats[0],
-        },
-        'beat-type': {
-          _text: beats[1],
-        },
+        beats: { _text: beatsPerMeasure },
+        'beat-type': { _text: beatUnit },
       },
       clef: {
-        sign: {_text: 'G'},
-        line: {_text: '2'},
+        sign: { _text: 'G' },
+        line: { _text: 2 },
       },
     },
     sound: {
       _attributes: {
         tempo: tempo,
-      }
-    },
-    note: {
-      rest: {},
-      duration: {
-        _text: measureTicks,
-      }
+      },
     },
   });
+
   const json = {
-    _declaration: {
-      _attributes: {
-        version: '1.0',
-        encoding:'utf-8'
-      }
-    },
-    _doctype: 'score-partwise PUBLIC "-//Recordare//DTD MusicXML 3.1 Partwise//EN" "http://www.musicxml.org/dtds/partwise.dtd"',
     'score-partwise': {
       _attributes: {
         version: '3.1',
@@ -175,32 +147,33 @@ export const parseMidiToMusicXML = (midi, lyric, locale, trackIndex, tempo, tran
       'part-list': {
         'score-part': {
           _attributes: {
-            id: `p${trackIndex}`,
+            id: `P${trackIndex}`,
           },
           'part-name': {
-            _text: header.name || '',
+            _text: header.name || 'Piano',
           },
         },
       },
       part: {
         _attributes: {
-          id: `p${trackIndex}`,
+          id: `P${trackIndex}`,
         },
         measure: measures,
       },
     },
   };
 
-  console.log(measures);
-
   const builder = new XMLBuilder({
     ignoreAttributes: false,
-    format: true,
     attributeNamePrefix: '_attributes.',
-    textNodeName: '_text'
+    textNodeName: '_text',
+    format: true,
+    suppressEmptyNode: true,
   });
-  const xml = `<?xml version="1.0" encoding="utf-8"?>
+
+  const xmlContent = builder.build(json);
+
+  return `<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE score-partwise PUBLIC "-//Recordare//DTD MusicXML 3.1 Partwise//EN" "http://www.musicxml.org/dtds/partwise.dtd">
-${builder.build(json['score-partwise'])}`;
-  return xml;
+${xmlContent}`;
 };
