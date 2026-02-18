@@ -10,7 +10,7 @@
     "@testing-library/user-event": "^7.1.2",
     "@tonejs/midi": "^2.0.27",
     "bootstrap": "^5.3.5",
-    "fast-xml-parser": "^5.2.0",
+    "fast-xml-parser": "^5.3.6",
     "jaco": "^4.0.0",
     "lisan": "^0.1.1",
     "react": "^18.3.1",
